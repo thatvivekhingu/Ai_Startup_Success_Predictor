@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.db
+.env
+backend/data/predictions.csv
+backend/model/*.pkl
+backend/model/metrics.json
+.pytest_cache/
+

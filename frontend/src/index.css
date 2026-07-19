@@ -1,0 +1,161 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --canvas: #f5f6f3;
+    --surface: #ffffff;
+    --ink: #18201b;
+    --muted: #657069;
+    --line: #dfe3df;
+    --mint: #a7e8bd;
+    --coral: #ef6a56;
+    --success: #237a45;
+  }
+  .dark {
+    color-scheme: dark;
+    --canvas: #111512;
+    --surface: #191e1a;
+    --ink: #f5f7f5;
+    --muted: #8f9a92;
+    --line: #2c332e;
+    --mint: #94d9aa;
+    --coral: #f27b68;
+    --success: #62c783;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    font-family: "DM Sans", "Segoe UI", sans-serif;
+    letter-spacing: 0;
+  }
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: var(--canvas);
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--success) 28%, transparent);
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: "Manrope", "Segoe UI", sans-serif;
+    letter-spacing: 0;
+  }
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    letter-spacing: 0;
+  }
+}
+@layer components {
+  .bg-canvas {
+    background-color: var(--canvas);
+  }
+  .bg-surface {
+    background-color: var(--surface);
+  }
+  .bg-night {
+    background: #111512;
+  }
+  .text-ink {
+    color: var(--ink);
+  }
+  .text-muted {
+    color: var(--muted);
+  }
+  .text-coral {
+    color: var(--coral);
+  }
+  .text-success {
+    color: var(--success);
+  }
+  .bg-mint {
+    background-color: var(--mint);
+  }
+  .bg-coral {
+    background-color: var(--coral);
+  }
+  .bg-success {
+    background-color: var(--success);
+  }
+  .border-line {
+    border-color: var(--line);
+  }
+  .panel {
+    @apply border border-line bg-surface dark:border-white/10;
+  }
+  .icon-btn {
+    @apply grid h-10 w-10 shrink-0 place-items-center rounded-md text-muted transition hover:bg-black/5 hover:text-ink dark:hover:bg-white/10 dark:hover:text-white;
+  }
+  .btn-primary {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#1d2921] px-5 text-sm font-semibold text-white transition hover:bg-[#2b3d31] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-mint dark:text-[#172019] dark:hover:bg-[#b8efc9];
+  }
+  .btn-secondary {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-sm font-medium transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5;
+  }
+  .field {
+    @apply h-11 w-full rounded-md border border-line bg-surface px-3.5 text-sm outline-none transition placeholder:text-muted focus:border-success focus:ring-2 focus:ring-mint/30 dark:border-white/10;
+  }
+  .label {
+    @apply mb-2 block text-xs font-semibold text-muted;
+  }
+  .metric {
+    @apply border-t-2 border-line bg-surface p-5 dark:border-white/10;
+  }
+  .data-table {
+    @apply w-full min-w-[760px] border-collapse text-left text-sm;
+  }
+  .data-table th {
+    @apply border-b border-line px-5 py-3 text-[11px] font-semibold uppercase text-muted dark:border-white/10;
+  }
+  .data-table td {
+    @apply border-b border-line px-5 py-4 dark:border-white/10;
+  }
+  .scenario-range {
+    height: 20px;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  .scenario-range::-webkit-slider-runnable-track {
+    height: 5px;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      var(--success),
+      color-mix(in srgb, var(--success) 22%, var(--line))
+    );
+  }
+  .scenario-range::-webkit-slider-thumb {
+    width: 18px;
+    height: 18px;
+    margin-top: -6.5px;
+    appearance: none;
+    border: 4px solid var(--surface);
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow:
+      0 0 0 1px var(--line),
+      0 0 14px color-mix(in srgb, var(--success) 30%, transparent);
+  }
+  .scenario-range::-moz-range-track {
+    height: 5px;
+    border-radius: 999px;
+    background: var(--line);
+  }
+  .scenario-range::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: 4px solid var(--surface);
+    border-radius: 50%;
+    background: var(--success);
+  }
+}
