@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { 
   Sparkles, ArrowUpRight, ArrowDownRight, AlertTriangle, 
   CheckCircle2, X, Search, Bell, Command, ChevronRight, Layers,
-  Activity, SlidersHorizontal, Bot, ShieldAlert, Radio, FileText, Inbox
+  Activity, SlidersHorizontal, Bot, ShieldAlert, Radio, FileText, Inbox,
+  TrendingUp, DollarSign, UsersRound, HelpCircle, ArrowRight
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
