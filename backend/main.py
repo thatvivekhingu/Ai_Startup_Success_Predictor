@@ -26,6 +26,7 @@ from .schemas import (
 )
 from .seed import seed_demo_workspace
 from .services import CSV_FIELDS, analyze_startup, dashboard_stats, feature_importance, model_accuracy, model_metrics, record_log, score_startup
+from .llm_copilot import copilot
 
 SECRET_KEY = os.getenv("JWT_SECRET", "startup-predictor-demo-secret-change-in-production")
 ALGORITHM = "HS256"
@@ -406,3 +407,8 @@ def download_csv(db: Session = Depends(get_db), user: User = Depends(current_use
         writer.writerow({"username": row.user.username, "date": row.created_at.isoformat(), "startup": row.startup_name, "funding": row.funding, "industry": row.industry, "prediction": row.prediction, "probability": row.probability, "accuracy": row.model_accuracy})
     headers = {"Content-Disposition": 'attachment; filename="foundr-ai-predictions.csv"'}
     return StreamingResponse(iter([output.getvalue()]), media_type="text/csv", headers=headers)
+
+@app.post("/copilot/advisory")
+def generate_copilot_advisory(payload: PredictionCreate, user: User = Depends(current_user)):
+    """Generate comprehensive LLM Investment Memo, Risk Diagnostics, and Founder Advisory Action Plan."""
+    return copilot.generate_advisory(payload.model_dump())

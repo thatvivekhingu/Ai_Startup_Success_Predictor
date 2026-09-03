@@ -5,6 +5,7 @@ import json
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from .models import ApiLog, Prediction
+from .shap_service import calculate_shap_explanations
 
 MODEL_PATH = Path(__file__).parent / "model" / "startup_model.pkl"
 METRICS_PATH = Path(__file__).parent / "model" / "metrics.json"
@@ -126,25 +127,29 @@ def analyze_startup(
     business_average = sum(item["score"] for item in dimensions) / len(dimensions)
     success_index = round(clamp(probability * 100 * 0.55 + business_average * 0.45))
 
-    raw_contributions = [
-        ("Growth momentum", (clamp((growth_rate + 20) / 170 * 100) - 50) / 50 * 18, f"Annual growth is {growth_rate:.0f}%"),
-        ("Funded runway", (clamp(runway_months / 24 * 100) - 50) / 50 * 17, f"Runway is {runway_months:.1f} months"),
-        ("Revenue traction", (clamp(revenue / 1_000_000 * 100) - 50) / 50 * 14, f"Annual revenue is ${revenue:,.0f}"),
-        ("Product maturity", (stage - 50) / 50 * 13, f"Product is at {data['product_stage']} stage"),
-        ("Founder experience", (clamp(experience / 15 * 100) - 50) / 50 * 10, f"Founder experience is {experience:.1f} years"),
-        ("Market opportunity", (clamp(market_size / 500_000_000 * 100) - 50) / 50 * 9, f"Addressable market is ${market_size:,.0f}"),
-        ("Competition pressure", -((competition - 50) / 50) * 10, f"Competition index is {competition:.0f}/100"),
-        ("Burn efficiency", -((clamp(burn_multiple / 5 * 100) - 40) / 60) * 11, f"Burn multiple is {burn_multiple:.1f}x"),
-    ]
-    explanations = [
-        {
-            "feature": name,
-            "impact": round(value, 1),
-            "direction": "positive" if value >= 0 else "negative",
-            "detail": detail,
-        }
-        for name, value, detail in sorted(raw_contributions, key=lambda item: abs(item[1]), reverse=True)
-    ]
+    shap_results = calculate_shap_explanations(data)
+    if shap_results:
+        explanations = shap_results[:8]
+    else:
+        raw_contributions = [
+            ("Growth momentum", (clamp((growth_rate + 20) / 170 * 100) - 50) / 50 * 18, f"Annual growth is {growth_rate:.0f}%"),
+            ("Funded runway", (clamp(runway_months / 24 * 100) - 50) / 50 * 17, f"Runway is {runway_months:.1f} months"),
+            ("Revenue traction", (clamp(revenue / 1_000_000 * 100) - 50) / 50 * 14, f"Annual revenue is ${revenue:,.0f}"),
+            ("Product maturity", (stage - 50) / 50 * 13, f"Product is at {data['product_stage']} stage"),
+            ("Founder experience", (clamp(experience / 15 * 100) - 50) / 50 * 10, f"Founder experience is {experience:.1f} years"),
+            ("Market opportunity", (clamp(market_size / 500_000_000 * 100) - 50) / 50 * 9, f"Addressable market is ${market_size:,.0f}"),
+            ("Competition pressure", -((competition - 50) / 50) * 10, f"Competition index is {competition:.0f}/100"),
+            ("Burn efficiency", -((clamp(burn_multiple / 5 * 100) - 40) / 60) * 11, f"Burn multiple is {burn_multiple:.1f}x"),
+        ]
+        explanations = [
+            {
+                "feature": name,
+                "impact": round(value, 1),
+                "direction": "positive" if value >= 0 else "negative",
+                "detail": detail,
+            }
+            for name, value, detail in sorted(raw_contributions, key=lambda item: abs(item[1]), reverse=True)
+        ]
 
     completeness = sum(data.get(key) not in (None, "") for key in (
         "funding", "team_size", "experience", "revenue", "burn_rate",
