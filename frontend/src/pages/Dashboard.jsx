@@ -1,426 +1,303 @@
 import { useEffect, useState } from "react";
-import {
-  ArrowUpRight,
-  Download,
-  Plus,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import api from "../services/api";
-import { Badge, Empty, PageIntro, Spinner, pct } from "../components/UI";
-import { useAuth } from "../context/AuthContext";
-import IntelligenceWorkspace from "../components/Intelligence";
+import { 
+  Activity, DollarSign, TrendingUp, ShieldAlert, Sparkles, 
+  ArrowUpRight, ArrowRight, Zap, Bot, SlidersHorizontal, 
+  Calendar, Layers, CheckCircle2, AlertOctagon, HelpCircle
+} from "lucide-react";
+import { MetricCard, Card, Badge, Button, Spinner } from "../components/UI";
+import { useNavigate } from "react-router-dom";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-const COLORS = ["#237a45", "#ef6a56"];
 export default function Dashboard() {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState("");
-  const { user } = useAuth();
-  const load = () =>
-    api
-      .get("/dashboard")
-      .then((response) => {
-        setData(response.data);
-        setError("");
-      })
-      .catch(() => setError("The dashboard could not be loaded."));
+  const [twin, setTwin] = useState(null);
+  const [health, setHealth] = useState(null);
+  const [forecast, setForecast] = useState(null);
+  const [warnings, setWarnings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    load();
-    const timer = setInterval(load, 30000);
-    return () => clearInterval(timer);
+    fetchDashboardData();
   }, []);
-  if (error) return <Empty title="Could not load dashboard" copy={error} />;
-  if (!data) return <Spinner />;
-  const { stats, recent, industries } = data;
-  const pie = [
-    { name: "Likely to succeed", value: stats.success_rate },
-    { name: "High risk", value: stats.failure_rate },
-  ];
-  const trend = recent
-    .slice()
-    .reverse()
-    .map((item, index) => ({
-      name: `P${index + 1}`,
-      confidence: Math.round(item.probability * 100),
-    }));
-  const exportPdf = async () => {
-    const { jsPDF } = await import("jspdf");
-    const pdf = new jsPDF();
-    const margin = 18;
-    pdf.setFillColor(22, 27, 24);
-    pdf.rect(0, 0, 210, 42, "F");
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(22);
-    pdf.text("Foundr.AI", margin, 19);
-    pdf.setFontSize(10);
-    pdf.setTextColor(167, 232, 189);
-    pdf.text("PORTFOLIO INTELLIGENCE REPORT", margin, 28);
-    pdf.setTextColor(24, 32, 27);
-    pdf.setFontSize(11);
-    pdf.text(`Generated ${new Date().toLocaleString()}`, margin, 53);
-    const metrics = [
-      ["Total predictions", stats.total_predictions],
-      ["Success rate", `${stats.success_rate}%`],
-      ["High risk", `${stats.failure_rate}%`],
-      ["Average confidence", `${stats.average_confidence}%`],
-      ["Model accuracy", `${stats.average_accuracy || 0}%`],
-    ];
-    let y = 68;
-    pdf.setFontSize(16);
-    pdf.text("Portfolio summary", margin, y);
-    y += 10;
-    pdf.setFontSize(11);
-    metrics.forEach(([label, value]) => {
-      pdf.setTextColor(101, 112, 105);
-      pdf.text(label, margin, y);
-      pdf.setTextColor(24, 32, 27);
-      pdf.text(String(value), 100, y);
-      y += 8;
-    });
-    y += 7;
-    pdf.setFontSize(16);
-    pdf.text("Recent predictions", margin, y);
-    y += 10;
-    pdf.setFontSize(9);
-    pdf.setTextColor(101, 112, 105);
-    pdf.text("Startup", margin, y);
-    pdf.text("Industry", 75, y);
-    pdf.text("Outcome", 115, y);
-    pdf.text("Confidence", 175, y);
-    y += 6;
-    pdf.setDrawColor(223, 227, 223);
-    pdf.line(margin, y, 192, y);
-    y += 7;
-    recent.forEach((item) => {
-      pdf.setTextColor(24, 32, 27);
-      pdf.text(item.startup_name.slice(0, 28), margin, y);
-      pdf.text(item.industry.slice(0, 16), 75, y);
-      pdf.text(
-        item.prediction === "Likely to succeed"
-          ? "Likely succeed"
-          : "High risk",
-        115,
-        y,
-      );
-      pdf.text(pct(item.probability), 175, y);
-      y += 8;
-    });
-    pdf.setFontSize(8);
-    pdf.setTextColor(101, 112, 105);
-    pdf.text(
-      "Decision support only. Validate model output with current market evidence.",
-      margin,
-      282,
-    );
-    pdf.save(
-      `foundr-ai-dashboard-${new Date().toISOString().slice(0, 10)}.pdf`,
-    );
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const [twinRes, healthRes, forecastRes, warnRes] = await Promise.all([
+        api.get("/api/startup/twin"),
+        api.get("/api/startup/health"),
+        api.get("/api/forecast"),
+        api.get("/api/early-warnings")
+      ]);
+      setTwin(twinRes.data);
+      setHealth(healthRes.data);
+      setForecast(forecastRes.data);
+      setWarnings(warnRes.data || []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading || !twin) {
+    return <Spinner label="Calibrating Startup Digital Twin & Health Score..." />;
+  }
+
+  const { startup, current_financials, current_customers, current_team, historical_financials } = twin;
+  const criticalWarnings = warnings.filter(w => w.severity === "critical");
+  const topAction = warnings.length > 0 ? warnings[0] : null;
+
+  // Combine forecast periods for chart
+  const forecastChartData = forecast ? forecast.forecast_periods.map((period, idx) => ({
+    period: period,
+    revenue: forecast.revenue_forecast.base[idx],
+    burn: forecast.burn_forecast[idx],
+    cash: forecast.cash_trajectory.base[idx]
+  })) : [];
+
   return (
-    <>
-      <PageIntro
-        eyebrow="Overview"
-        title={`Good morning, ${user?.username || "there"}`}
-        description="A concise view of your startup portfolio and the signals shaping your next decision."
-        action={
-          <div className="flex gap-2">
-            <button onClick={exportPdf} className="btn-secondary">
-              <Download size={17} />
-              <span className="hidden sm:inline">Export PDF</span>
-            </button>
-            <Link to="/predict" className="btn-primary">
-              <Plus size={17} />
-              New prediction
-            </Link>
+    <div className="space-y-8">
+      {/* 1. Hero Command Strip: "How is my startup doing?" */}
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-[#0d1017] via-[#101420] to-[#0a0d14] p-6 lg:p-8 shadow-2xl">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-brand-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 -mb-16 h-48 w-48 rounded-full bg-accent-emerald/10 blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Badge variant="emerald">Live Digital Twin</Badge>
+              <span className="text-xs text-dark-muted">• {startup.state_city} • {startup.sector} ({startup.stage} Stage)</span>
+            </div>
+            <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-white">
+              {startup.name}
+            </h1>
+            <p className="text-sm text-dark-muted max-w-xl">
+              {health?.summary || "Operational health is stable with healthy runway and solid traction momentum."}
+            </p>
           </div>
-        }
-      />
-      <div className="mb-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        <Metric
-          icon={Target}
-          label="Total predictions"
-          value={stats.total_predictions}
-          note="All time"
-        />
-        <Metric
+
+          {/* Health & Runway Dials */}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center min-w-[130px] backdrop-blur-md">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-dark-muted">Startup Health</div>
+              <div className="mt-1 flex items-baseline justify-center gap-1">
+                <span className="text-3xl font-black text-white">{health?.overall_health || twin.health_score}</span>
+                <span className="text-xs text-dark-muted">/100</span>
+              </div>
+              <div className="mt-1 text-[10px] font-bold text-accent-emerald uppercase tracking-wider">{health?.status || twin.health_status}</div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-center min-w-[130px] backdrop-blur-md">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-dark-muted">Funded Runway</div>
+              <div className="mt-1 flex items-baseline justify-center gap-1">
+                <span className="text-3xl font-black text-accent-cyan">{twin.runway_months}</span>
+                <span className="text-xs text-dark-muted">Months</span>
+              </div>
+              <div className="mt-1 text-[10px] font-bold text-accent-cyan uppercase tracking-wider">
+                {twin.runway_months >= 12 ? "Safe Horizon" : "Action Needed"}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Key Operational Metrics Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricCard
+          title="Monthly Recurring Revenue"
+          value={`₹${(current_financials.revenue / 100000).toFixed(1)} Lakhs`}
+          subtitle="Annualized Run-rate: ₹2.2 Cr"
+          delta="+18.4% MoM"
+          deltaType="positive"
           icon={TrendingUp}
-          label="Success rate"
-          value={`${stats.success_rate}%`}
-          note="Portfolio signal"
-          accent
+          glowColor="emerald"
+          onClick={() => navigate("/twin")}
         />
-        <Metric
-          icon={TrendingDown}
-          label="High risk"
-          value={`${stats.failure_rate}%`}
-          note="Needs attention"
-          danger
+        <MetricCard
+          title="Monthly Operating Burn"
+          value={`₹${(current_financials.burn / 100000).toFixed(1)} Lakhs`}
+          subtitle={`Burn Multiple: ${twin.burn_multiple}x`}
+          delta="+3.2% vs Q2"
+          deltaType="negative"
+          icon={DollarSign}
+          glowColor="amber"
+          onClick={() => navigate("/simulation")}
         />
-        <Metric
-          icon={Zap}
-          label="Today"
-          value={stats.today_predictions}
-          note="New predictions"
+        <MetricCard
+          title="Customer Base & Retention"
+          value={`${current_customers.count} Accounts`}
+          subtitle={`Net Retention: ${current_customers.retention_rate}%`}
+          delta="-0.4% Churn"
+          deltaType="positive"
+          icon={Activity}
+          glowColor="cyan"
+          onClick={() => navigate("/twin")}
         />
-        <Metric
-          icon={Users}
-          label="Avg. accuracy"
-          value={`${stats.average_accuracy || 0}%`}
-          note="Deployed model"
+        <MetricCard
+          title="Team Velocity & R&D"
+          value={`${current_team.headcount} Members`}
+          subtitle={`${current_team.engineers} Eng / ${current_team.sales} Sales`}
+          delta="Stable"
+          deltaType="neutral"
+          icon={Layers}
+          glowColor="brand"
+          onClick={() => navigate("/twin")}
         />
       </div>
-      {data.latest_analysis && (
-        <div className="mb-5">
-          <IntelligenceWorkspace
-            startup={data.latest_analysis.startup}
-            analysis={data.latest_analysis.analysis}
-            compact
-          />
+
+      {/* 3. Signature: "What Should I Do Now?" Priority Action Box */}
+      {topAction && (
+        <div className="rounded-2xl border border-brand-500/30 bg-gradient-to-r from-brand-950/30 via-[#101426] to-[#0c0f1d] p-6 shadow-glow-brand">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div className="flex items-start gap-4">
+              <div className="rounded-xl bg-brand-500/10 p-3 text-brand-400 shrink-0">
+                <Zap size={24} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-400">Signature Priority Decision</span>
+                  <Badge variant={topAction.severity === "critical" ? "rose" : "amber"} size="sm">
+                    {topAction.severity}
+                  </Badge>
+                </div>
+                <h2 className="text-lg font-bold text-white mt-1">{topAction.title}</h2>
+                <p className="text-xs text-gray-300 mt-1 max-w-2xl leading-relaxed">
+                  <span className="font-semibold text-white">Recommended Strategy:</span> {topAction.recommended_action}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex shrink-0 items-center gap-3">
+              <Button 
+                variant="primary" 
+                size="md" 
+                icon={SlidersHorizontal} 
+                onClick={() => navigate("/simulation")}
+              >
+                Simulate Strategy
+              </Button>
+              <Button 
+                variant="secondary" 
+                size="md" 
+                icon={Bot} 
+                onClick={() => navigate("/copilot")}
+              >
+                Ask Copilot
+              </Button>
+            </div>
+          </div>
         </div>
       )}
-      <div className="grid gap-5 xl:grid-cols-[1.45fr_.8fr]">
-        <section className="panel p-5 sm:p-6">
-          <div className="mb-5 flex items-start justify-between">
-            <div>
-              <h3 className="font-semibold">Confidence trend</h3>
-              <p className="mt-1 text-xs text-muted">
-                Latest prediction confidence
-              </p>
-            </div>
-            <span className="text-xs text-success">Live / 30s</span>
-          </div>
-          <div className="h-64">
-            {trend.length ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={trend}>
-                  <defs>
-                    <linearGradient id="mintFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="5%"
-                        stopColor="#a7e8bd"
-                        stopOpacity={0.45}
-                      />
-                      <stop offset="95%" stopColor="#a7e8bd" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#dfe3df"
+
+      {/* 4. 6-Pillar Health Score Breakdown & Forecast Trajectory */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+        {/* 6-Pillar Health Breakdown */}
+        <Card 
+          title="6-Pillar Startup Health Matrix" 
+          subtitle="Explainable mathematical diagnostic breakdown across core operations"
+          className="lg:col-span-5"
+          action={<Button variant="ghost" size="sm" onClick={() => navigate("/twin")}>Explore Twin →</Button>}
+        >
+          <div className="space-y-4">
+            {health?.pillars?.map((p, idx) => (
+              <div key={idx} className="space-y-1.5">
+                <div className="flex justify-between text-xs">
+                  <span className="font-medium text-white">{p.name}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-dark-muted">{p.status}</span>
+                    <span className="font-mono font-bold text-brand-400">{p.score}/100</span>
+                  </div>
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-white/5 overflow-hidden">
+                  <div 
+                    className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent-emerald transition-all duration-500"
+                    style={{ width: `${p.score}%` }}
                   />
-                  <XAxis
-                    dataKey="name"
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fontSize: 11, fill: "#657069" }}
-                  />
-                  <YAxis
-                    domain={[0, 100]}
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fontSize: 11, fill: "#657069" }}
-                    tickFormatter={(value) => `${value}%`}
-                  />
-                  <Tooltip formatter={(value) => [`${value}%`, "Confidence"]} />
-                  <Area
-                    type="monotone"
-                    dataKey="confidence"
-                    stroke="#237a45"
-                    strokeWidth={2}
-                    fill="url(#mintFill)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <Empty
-                title="No trend yet"
-                copy="Create a prediction to start your trend."
-              />
-            )}
-          </div>
-        </section>
-        <section className="panel p-5 sm:p-6">
-          <div>
-            <h3 className="font-semibold">Outcome mix</h3>
-            <p className="mt-1 text-xs text-muted">Portfolio health</p>
-          </div>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pie}
-                  innerRadius={55}
-                  outerRadius={76}
-                  paddingAngle={3}
-                  dataKey="value"
-                >
-                  <Cell fill={COLORS[0]} />
-                  <Cell fill={COLORS[1]} />
-                </Pie>
-                <Tooltip formatter={(value) => [`${value}%`, "Share"]} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="space-y-3">
-            {pie.map((item, index) => (
-              <div
-                className="flex items-center justify-between text-sm"
-                key={item.name}
-              >
-                <span className="flex items-center gap-2 text-muted">
-                  <i
-                    className="h-2 w-2 rounded-full"
-                    style={{ background: COLORS[index] }}
-                  />
-                  {item.name}
-                </span>
-                <span className="font-semibold">{item.value}%</span>
+                </div>
+                <div className="text-[10px] text-dark-muted">{p.detail}</div>
               </div>
             ))}
           </div>
-        </section>
-      </div>
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_.85fr]">
-        <section className="panel overflow-hidden">
-          <div className="flex items-center justify-between border-b border-line px-5 py-4 dark:border-white/10">
-            <div>
-              <h3 className="font-semibold">Recent predictions</h3>
-              <p className="mt-1 text-xs text-muted">
-                Most recent portfolio activity
-              </p>
-            </div>
-            <Link
-              to="/history"
-              className="flex items-center gap-1 text-xs font-semibold text-success"
-            >
-              View all
-              <ArrowUpRight size={14} />
-            </Link>
-          </div>
-          {recent.length ? (
-            <div className="overflow-x-auto">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>Startup</th>
-                    <th>Industry</th>
-                    <th>Signal</th>
-                    <th>Confidence</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recent.map((item) => (
-                    <tr key={item.id}>
-                      <td>
-                        <p className="font-medium">{item.startup_name}</p>
-                        <p className="mt-0.5 text-xs text-muted">
-                          {item.country}
-                        </p>
-                      </td>
-                      <td className="text-muted">{item.industry}</td>
-                      <td>
-                        <Badge
-                          success={item.prediction === "Likely to succeed"}
-                        >
-                          {item.prediction}
-                        </Badge>
-                      </td>
-                      <td className="font-semibold">{pct(item.probability)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <Empty
-              title="No predictions yet"
-              copy="Your latest predictions will appear here."
-            />
-          )}
-        </section>
-        <section className="panel p-5 sm:p-6">
-          <div className="mb-5">
-            <h3 className="font-semibold">Top industries</h3>
-            <p className="mt-1 text-xs text-muted">
-              Where your portfolio is concentrated
-            </p>
-          </div>
-          <div className="h-56">
+        </Card>
+
+        {/* 12-Month Forward Trajectory Forecast */}
+        <Card 
+          title="12-Month Forward Financial Trajectory" 
+          subtitle="Projected monthly revenue expansion vs cash depletion curve"
+          className="lg:col-span-7"
+          action={<Button variant="ghost" size="sm" onClick={() => navigate("/forecast")}>View Forecast →</Button>}
+        >
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={industries}
-                layout="vertical"
-                margin={{ left: 12, right: 10 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  horizontal={false}
-                  stroke="#dfe3df"
+              <AreaChart data={forecastChartData}>
+                <defs>
+                  <linearGradient id="chartRev" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="chartCash" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="period" stroke="#475569" fontSize={10} />
+                <YAxis stroke="#475569" fontSize={10} tickFormatter={(val) => `₹${(val / 100000).toFixed(0)}L`} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: "#0e1118", borderColor: "#1c2230", borderRadius: 12, fontSize: 11 }}
+                  formatter={(val) => [`₹${(val).toLocaleString()}`, ""]}
                 />
-                <XAxis
-                  type="number"
-                  allowDecimals={false}
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fontSize: 11, fill: "#657069" }}
-                />
-                <YAxis
-                  type="category"
-                  dataKey="name"
-                  width={90}
-                  tickLine={false}
-                  axisLine={false}
-                  tick={{ fontSize: 11, fill: "#657069" }}
-                />
-                <Tooltip />
-                <Bar
-                  dataKey="count"
-                  fill="#237a45"
-                  radius={[0, 3, 3, 0]}
-                  barSize={18}
-                />
-              </BarChart>
+                <Area type="monotone" dataKey="revenue" name="Projected Revenue" stroke="#10b981" fill="url(#chartRev)" strokeWidth={2} />
+                <Area type="monotone" dataKey="cash" name="Projected Cash Balance" stroke="#6366f1" fill="url(#chartCash)" strokeWidth={2} />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
-        </section>
+          <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-3 text-xs text-dark-muted">
+            <span>Forecast Horizon: 12 Months Forward</span>
+            <span className="text-accent-emerald font-semibold">Expected Cash Out: {forecast?.projected_cash_out_month}</span>
+          </div>
+        </Card>
       </div>
-    </>
-  );
-}
-function Metric({ icon: Icon, label, value, note, accent, danger }) {
-  return (
-    <div
-      className={`metric ${accent ? "border-success" : danger ? "border-coral" : ""}`}
-    >
-      <div className="mb-4 flex items-center justify-between">
-        <span className="text-xs font-medium text-muted">{label}</span>
-        <Icon
-          size={17}
-          className={
-            accent ? "text-success" : danger ? "text-coral" : "text-muted"
-          }
-        />
+
+      {/* 5. Quick Strategy Simulation Launchers */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div 
+          onClick={() => navigate("/simulation")}
+          className="glass-card glass-card-hover rounded-2xl p-5 cursor-pointer border border-white/5 space-y-2"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-accent-emerald uppercase tracking-wider">Strategy Lab</span>
+            <ArrowRight size={16} className="text-dark-muted" />
+          </div>
+          <div className="text-sm font-bold text-white">Test Runway Scenarios</div>
+          <p className="text-xs text-dark-muted">Simulate burn cuts, pricing shifts, or hiring additions in real-time.</p>
+        </div>
+
+        <div 
+          onClick={() => navigate("/copilot")}
+          className="glass-card glass-card-hover rounded-2xl p-5 cursor-pointer border border-white/5 space-y-2"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-brand-400 uppercase tracking-wider">Agentic AI</span>
+            <ArrowRight size={16} className="text-dark-muted" />
+          </div>
+          <div className="text-sm font-bold text-white">Ask Foundr Copilot</div>
+          <p className="text-xs text-dark-muted">Autonomous strategic advisory grounded in your real operating numbers.</p>
+        </div>
+
+        <div 
+          onClick={() => navigate("/reports")}
+          className="glass-card glass-card-hover rounded-2xl p-5 cursor-pointer border border-white/5 space-y-2"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-accent-cyan uppercase tracking-wider">Intelligence Report</span>
+            <ArrowRight size={16} className="text-dark-muted" />
+          </div>
+          <div className="text-sm font-bold text-white">Generate VC Memo</div>
+          <p className="text-xs text-dark-muted">Synthesize complete 13-section report for investors and committee review.</p>
+        </div>
       </div>
-      <p className="text-2xl font-semibold">{value}</p>
-      <p className="mt-1 text-xs text-muted">{note}</p>
     </div>
   );
 }

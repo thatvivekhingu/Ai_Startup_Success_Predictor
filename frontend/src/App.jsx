@@ -10,6 +10,8 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const DigitalTwin = lazy(() => import("./pages/DigitalTwin"));
 const DecisionCenter = lazy(() => import("./pages/DecisionCenter"));
 const SimulationLab = lazy(() => import("./pages/SimulationLab"));
+const Scenarios = lazy(() => import("./pages/Scenarios"));
+const Forecast = lazy(() => import("./pages/Forecast"));
 const FoundrCopilot = lazy(() => import("./pages/FoundrCopilot"));
 const RiskExplorer = lazy(() => import("./pages/RiskExplorer"));
 const SignalsTimeline = lazy(() => import("./pages/SignalsTimeline"));
@@ -23,7 +25,7 @@ const Team = lazy(() => import("./pages/Team"));
 
 function Protected() {
   const { user, ready } = useAuth();
-  if (!ready) return <Spinner label="Restoring your session" />;
+  if (!ready) return <Spinner label="Restoring your session..." />;
   return user ? <AppLayout /> : <Navigate to="/login" replace />;
 }
 
@@ -38,7 +40,7 @@ function AdminOnly() {
 
 export default function App() {
   return (
-    <Suspense fallback={<Spinner label="Loading workspace" />}>
+    <Suspense fallback={<Spinner label="Loading Foundr.AI 2.0 workspace..." />}>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -48,6 +50,8 @@ export default function App() {
           <Route path="/twin" element={<DigitalTwin />} />
           <Route path="/decision-center" element={<DecisionCenter />} />
           <Route path="/simulation" element={<SimulationLab />} />
+          <Route path="/scenarios" element={<Scenarios />} />
+          <Route path="/forecast" element={<Forecast />} />
           <Route path="/copilot" element={<FoundrCopilot />} />
           <Route path="/risk-explorer" element={<RiskExplorer />} />
           <Route path="/signals" element={<SignalsTimeline />} />

@@ -1,161 +1,116 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    color-scheme: light;
-    --canvas: #f5f6f3;
-    --surface: #ffffff;
-    --ink: #18201b;
-    --muted: #657069;
-    --line: #dfe3df;
-    --mint: #a7e8bd;
-    --coral: #ef6a56;
-    --success: #237a45;
-  }
-  .dark {
     color-scheme: dark;
-    --canvas: #111512;
-    --surface: #191e1a;
-    --ink: #f5f7f5;
-    --muted: #8f9a92;
-    --line: #2c332e;
-    --mint: #94d9aa;
-    --coral: #f27b68;
-    --success: #62c783;
+    --bg-dark: #08090d;
+    --card-dark: #0e1118;
+    --border-dark: #1c2230;
   }
+
   * {
     box-sizing: border-box;
+    border-color: #1c2230;
   }
+
   html {
-    font-family: "DM Sans", "Segoe UI", sans-serif;
-    letter-spacing: 0;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #08090d;
+    color: #f1f5f9;
+    letter-spacing: -0.011em;
   }
+
   body {
     margin: 0;
     min-width: 320px;
-    background: var(--canvas);
+    background-color: #08090d;
+    color: #f1f5f9;
+    overflow-x: hidden;
   }
+
   ::selection {
-    background: color-mix(in srgb, var(--success) 28%, transparent);
+    background: rgba(99, 102, 241, 0.35);
+    color: #ffffff;
   }
-  h1,
-  h2,
-  h3 {
-    font-family: "Manrope", "Segoe UI", sans-serif;
-    letter-spacing: 0;
+
+  /* Custom Sleek Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
-  button,
-  a,
-  input,
-  select,
-  textarea {
-    letter-spacing: 0;
+  ::-webkit-scrollbar-track {
+    background: #08090d;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1c2230;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2b3347;
   }
 }
+
 @layer components {
-  .bg-canvas {
-    background-color: var(--canvas);
+  .glass-card {
+    background: rgba(14, 17, 24, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
   }
-  .bg-surface {
-    background-color: var(--surface);
+
+  .glass-card-hover {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .bg-night {
-    background: #111512;
+  .glass-card-hover:hover {
+    background: rgba(20, 24, 34, 0.85);
+    border-color: rgba(99, 102, 241, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -4px rgba(99, 102, 241, 0.15);
   }
-  .text-ink {
-    color: var(--ink);
+
+  .glow-border {
+    position: relative;
   }
-  .text-muted {
-    color: var(--muted);
+  .glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(90deg, #6366f1, #06b6d4, #10b981);
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
-  .text-coral {
-    color: var(--coral);
+  .glow-border:hover::after {
+    opacity: 1;
   }
-  .text-success {
-    color: var(--success);
-  }
-  .bg-mint {
-    background-color: var(--mint);
-  }
-  .bg-coral {
-    background-color: var(--coral);
-  }
-  .bg-success {
-    background-color: var(--success);
-  }
-  .border-line {
-    border-color: var(--line);
-  }
-  .panel {
-    @apply border border-line bg-surface dark:border-white/10;
-  }
-  .icon-btn {
-    @apply grid h-10 w-10 shrink-0 place-items-center rounded-md text-muted transition hover:bg-black/5 hover:text-ink dark:hover:bg-white/10 dark:hover:text-white;
-  }
-  .btn-primary {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md bg-[#1d2921] px-5 text-sm font-semibold text-white transition hover:bg-[#2b3d31] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-mint dark:text-[#172019] dark:hover:bg-[#b8efc9];
-  }
-  .btn-secondary {
-    @apply inline-flex h-11 items-center justify-center gap-2 rounded-md border border-line bg-surface px-4 text-sm font-medium transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5;
-  }
-  .field {
-    @apply h-11 w-full rounded-md border border-line bg-surface px-3.5 text-sm outline-none transition placeholder:text-muted focus:border-success focus:ring-2 focus:ring-mint/30 dark:border-white/10;
-  }
-  .label {
-    @apply mb-2 block text-xs font-semibold text-muted;
-  }
-  .metric {
-    @apply border-t-2 border-line bg-surface p-5 dark:border-white/10;
-  }
-  .data-table {
-    @apply w-full min-w-[760px] border-collapse text-left text-sm;
-  }
-  .data-table th {
-    @apply border-b border-line px-5 py-3 text-[11px] font-semibold uppercase text-muted dark:border-white/10;
-  }
-  .data-table td {
-    @apply border-b border-line px-5 py-4 dark:border-white/10;
-  }
-  .scenario-range {
-    height: 20px;
+
+  /* Range input slider styling */
+  input[type="range"] {
+    -webkit-appearance: none;
     appearance: none;
-    background: transparent;
+    background: #1c2230;
+    height: 6px;
+    border-radius: 9999px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #6366f1;
     cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+    transition: transform 0.15s ease, background-color 0.15s ease;
   }
-  .scenario-range::-webkit-slider-runnable-track {
-    height: 5px;
-    border-radius: 999px;
-    background: linear-gradient(
-      90deg,
-      var(--success),
-      color-mix(in srgb, var(--success) 22%, var(--line))
-    );
-  }
-  .scenario-range::-webkit-slider-thumb {
-    width: 18px;
-    height: 18px;
-    margin-top: -6.5px;
-    appearance: none;
-    border: 4px solid var(--surface);
-    border-radius: 50%;
-    background: var(--success);
-    box-shadow:
-      0 0 0 1px var(--line),
-      0 0 14px color-mix(in srgb, var(--success) 30%, transparent);
-  }
-  .scenario-range::-moz-range-track {
-    height: 5px;
-    border-radius: 999px;
-    background: var(--line);
-  }
-  .scenario-range::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border: 4px solid var(--surface);
-    border-radius: 50%;
-    background: var(--success);
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #818cf8;
   }
 }
