@@ -50,13 +50,15 @@ export function AuthProvider({ children }) {
     const otherStorage = values.remember_me ? sessionStorage : localStorage;
     otherStorage.removeItem("ss_token");
     otherStorage.removeItem("ss_user");
-    storage.setItem("ss_token", data.access_token);
+    const t = data.access_token || data.token;
+    storage.setItem("ss_token", t);
     storage.setItem("ss_user", JSON.stringify(data.user));
     setUser(data.user);
   };
   const register = async (values) => {
     const { data } = await api.post("/register", values);
-    localStorage.setItem("ss_token", data.access_token);
+    const t = data.access_token || data.token;
+    localStorage.setItem("ss_token", t);
     localStorage.setItem("ss_user", JSON.stringify(data.user));
     setUser(data.user);
   };

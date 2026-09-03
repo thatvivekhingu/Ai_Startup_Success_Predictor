@@ -121,7 +121,8 @@ def login(payload: AuthRequest, request: Request = None, db: Session = Depends(g
         raise HTTPException(status_code=401, detail="Invalid username or password")
     db.add(LoginEvent(user_id=user.id, success=True))
     db.commit()
-    return {"token": make_token(user, payload.remember_me), "user": {"id": user.id, "username": user.username, "role": user.role, "email": user.email}}
+    t = make_token(user, payload.remember_me)
+    return {"access_token": t, "token": t, "token_type": "bearer", "user": {"id": user.id, "username": user.username, "role": user.role, "email": user.email}}
 
 @app.post("/register")
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
@@ -134,7 +135,8 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
     seed_nova_ai_digital_twin(db, user)
-    return {"token": make_token(user), "user": {"id": user.id, "username": user.username, "role": user.role, "email": user.email}}
+    t = make_token(user)
+    return {"access_token": t, "token": t, "token_type": "bearer", "user": {"id": user.id, "username": user.username, "role": user.role, "email": user.email}}
 
 @app.get("/me")
 def me(user: User = Depends(current_user)):
