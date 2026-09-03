@@ -6,8 +6,14 @@ import { Spinner } from "./components/UI";
 
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
-const Home = lazy(() => import("./pages/Home"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const DigitalTwin = lazy(() => import("./pages/DigitalTwin"));
+const DecisionCenter = lazy(() => import("./pages/DecisionCenter"));
+const SimulationLab = lazy(() => import("./pages/SimulationLab"));
+const FoundrCopilot = lazy(() => import("./pages/FoundrCopilot"));
+const RiskExplorer = lazy(() => import("./pages/RiskExplorer"));
+const SignalsTimeline = lazy(() => import("./pages/SignalsTimeline"));
+const ExecutiveReport = lazy(() => import("./pages/ExecutiveReport"));
 const Predict = lazy(() => import("./pages/Predict"));
 const History = lazy(() => import("./pages/History"));
 const Analytics = lazy(() => import("./pages/Analytics"));
@@ -20,6 +26,7 @@ function Protected() {
   if (!ready) return <Spinner label="Restoring your session" />;
   return user ? <AppLayout /> : <Navigate to="/login" replace />;
 }
+
 function AdminOnly() {
   const { user } = useAuth();
   return user?.role === "admin" ? (
@@ -28,6 +35,7 @@ function AdminOnly() {
     <Navigate to="/dashboard" replace />
   );
 }
+
 export default function App() {
   return (
     <Suspense fallback={<Spinner label="Loading workspace" />}>
@@ -35,9 +43,15 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route element={<Protected />}>
-          <Route index element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<Home />} />
+          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/twin" element={<DigitalTwin />} />
+          <Route path="/decision-center" element={<DecisionCenter />} />
+          <Route path="/simulation" element={<SimulationLab />} />
+          <Route path="/copilot" element={<FoundrCopilot />} />
+          <Route path="/risk-explorer" element={<RiskExplorer />} />
+          <Route path="/signals" element={<SignalsTimeline />} />
+          <Route path="/reports" element={<ExecutiveReport />} />
           <Route path="/predict" element={<Predict />} />
           <Route path="/history" element={<History />} />
           <Route path="/analytics" element={<Analytics />} />

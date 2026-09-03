@@ -2,30 +2,39 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Activity,
-  BarChart3,
-  ChevronRight,
-  Clock3,
-  History,
-  Home,
+  Layers,
+  ShieldAlert,
+  SlidersHorizontal,
+  Bot,
+  Radio,
+  FileText,
+  Sparkles,
   LayoutDashboard,
+  History,
+  BarChart3,
+  Clock3,
+  Settings,
+  UsersRound,
   LogOut,
   Menu,
   Moon,
-  Settings,
-  Sparkles,
   Sun,
-  UsersRound,
-  X,
+  X
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const links = [
-  { label: "Home", path: "/home", icon: Home },
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { label: "AI assessment", path: "/predict", icon: Sparkles },
+  { label: "Digital Twin", path: "/twin", icon: Layers },
+  { label: "Decision Center", path: "/decision-center", icon: Activity },
+  { label: "Simulation Lab", path: "/simulation", icon: SlidersHorizontal },
+  { label: "Foundr Copilot", path: "/copilot", icon: Bot },
+  { label: "Risk Explorer", path: "/risk-explorer", icon: ShieldAlert },
+  { label: "Signals & Timeline", path: "/signals", icon: Radio },
+  { label: "Executive Report", path: "/reports", icon: FileText },
+  { label: "AI Predictor", path: "/predict", icon: Sparkles },
   { label: "History", path: "/history", icon: History },
-  { label: "Analytics", path: "/analytics", icon: BarChart3 },
-  { label: "Activity logs", path: "/logs", icon: Clock3 },
+  { label: "Activity Logs", path: "/logs", icon: Clock3 },
   { label: "Team", path: "/team", icon: UsersRound, adminOnly: true },
   { label: "Settings", path: "/settings", icon: Settings },
 ];
@@ -38,46 +47,53 @@ export default function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("ss_theme", dark ? "dark" : "light");
   }, [dark]);
+
   useEffect(() => {
     const syncTheme = (event) => setDark(event.detail === "dark");
     window.addEventListener("ss-theme-change", syncTheme);
     return () => window.removeEventListener("ss-theme-change", syncTheme);
   }, []);
+
   useEffect(() => setOpen(false), [location.pathname]);
+
   const visibleLinks = links.filter(
     (item) => !item.adminOnly || user?.role === "admin",
   );
+
   const title =
     links.find((item) => item.path === location.pathname)?.label || "Workspace";
+
   const doLogout = () => {
     logout();
     navigate("/login");
   };
+
   return (
-    <div className="min-h-screen bg-canvas text-ink dark:bg-night dark:text-white">
+    <div className="min-h-screen bg-canvas text-ink dark:bg-[#0c110e] dark:text-white">
       {open && (
         <button
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
           aria-label="Close navigation"
           onClick={() => setOpen(false)}
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-white/10 bg-[#161b18] text-white transition-transform lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-white/10 bg-[#121814] text-white transition-transform lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
-        <div className="flex h-20 items-center justify-between px-6">
+        <div className="flex h-20 items-center justify-between px-6 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center bg-mint text-[#162019]">
-              <Activity size={19} />
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-emerald-500 text-black font-black">
+              <Activity size={20} />
             </span>
             <div>
-              <div className="text-sm font-semibold">Foundr.AI</div>
-              <div className="text-[11px] text-white/45">
-                Intelligence workspace
+              <div className="text-sm font-bold tracking-tight">Foundr.AI <span className="text-xs font-mono text-emerald-400">2.0</span></div>
+              <div className="text-[10px] text-white/45 uppercase tracking-wider">
+                Digital Twin Decision OS
               </div>
             </div>
           </div>
@@ -89,70 +105,63 @@ export default function AppLayout() {
             <X size={19} />
           </button>
         </div>
-        <nav className="mt-5 space-y-1 px-3">
+
+        <nav className="mt-4 flex-1 overflow-y-auto space-y-1 px-3">
           {visibleLinks.map(({ label, path, icon: Icon }) => (
             <NavLink
               key={path}
               to={path}
               className={({ isActive }) =>
-                `group flex h-11 items-center gap-3 border-l-2 px-4 text-sm transition ${isActive ? "border-mint bg-white/10 text-white" : "border-transparent text-white/55 hover:bg-white/5 hover:text-white"}`
+                `group flex h-10 items-center gap-3 rounded-lg border-l-2 px-3.5 text-xs font-medium transition ${isActive ? "border-emerald-400 bg-emerald-500/10 text-emerald-300 font-semibold" : "border-transparent text-white/60 hover:bg-white/5 hover:text-white"}`
               }
             >
-              <Icon size={18} />
-              <span className="flex-1">{label}</span>
-              <ChevronRight
-                size={15}
-                className="opacity-0 group-hover:opacity-70"
-              />
+              <Icon size={16} className="shrink-0" />
+              <span>{label}</span>
             </NavLink>
           ))}
         </nav>
-        <div className="mt-auto border-t border-white/10 p-4">
-          <div className="mb-4 flex items-center gap-3 px-2">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-coral text-xs font-bold text-white">
-              {user?.username?.slice(0, 2).toUpperCase()}
-            </span>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">{user?.username}</p>
-              <p className="truncate text-[11px] text-white/45">{user?.role}</p>
+
+        <div className="border-t border-white/5 p-4">
+          <div className="flex items-center justify-between">
+            <div className="truncate">
+              <div className="text-xs font-semibold text-white">{user?.username}</div>
+              <div className="text-[10px] text-emerald-400 capitalize">{user?.role}</div>
             </div>
+            <button
+              onClick={doLogout}
+              className="rounded-lg p-2 text-white/50 hover:bg-white/5 hover:text-rose-400 transition"
+              title="Logout"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
-          <button
-            onClick={doLogout}
-            className="flex h-10 w-full items-center gap-3 px-3 text-sm text-white/55 hover:bg-white/5 hover:text-white"
-          >
-            <LogOut size={17} />
-            Sign out
-          </button>
         </div>
       </aside>
-      <div className="lg:pl-64">
-        <header className="sticky top-0 z-20 flex h-20 items-center border-b border-line bg-canvas/90 px-5 backdrop-blur dark:border-white/10 dark:bg-night/90 sm:px-8">
-          <button
-            className="icon-btn mr-3 lg:hidden"
-            onClick={() => setOpen(true)}
-            aria-label="Open navigation"
-          >
-            <Menu size={20} />
-          </button>
-          <div>
-            <p className="text-[11px] font-semibold uppercase text-muted">
-              Workspace
-            </p>
-            <h1 className="text-lg font-semibold">{title}</h1>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
+
+      <div className="lg:pl-64 flex flex-col min-h-screen">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-gray-800 bg-[#0c110e]/90 backdrop-blur px-6">
+          <div className="flex items-center gap-3">
             <button
-              className="icon-btn"
-              onClick={() => setDark(!dark)}
-              title="Toggle theme"
-              aria-label="Toggle theme"
+              onClick={() => setOpen(true)}
+              className="rounded-lg p-2 text-white/70 hover:bg-white/5 lg:hidden"
             >
-              {dark ? <Sun size={18} /> : <Moon size={18} />}
+              <Menu size={20} />
+            </button>
+            <h2 className="text-base font-bold text-white">{title}</h2>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setDark(!dark)}
+              className="rounded-lg border border-gray-800 bg-gray-900 p-2 text-gray-300 hover:text-white transition"
+              title="Toggle Theme"
+            >
+              {dark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
           </div>
         </header>
-        <main className="mx-auto max-w-[1500px] p-5 sm:p-8">
+
+        <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
           <Outlet />
         </main>
       </div>
