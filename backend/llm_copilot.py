@@ -3,18 +3,59 @@ import json
 import urllib.request
 import urllib.error
 from pathlib import Path
+from dotenv import load_dotenv
 from .services import analyze_startup, score_startup
+
+load_dotenv()
 
 class LLMStartupCopilot:
     """
     Enterprise AI Startup Copilot & Strategic Advisory Engine.
-    Combines Machine Learning risk scores, SHAP feature attributions, and LLM reasoning.
+    Combines Machine Learning risk scores, SHAP feature attributions, and Google Gemini LLM reasoning.
     """
 
     def __init__(self):
         self.gemini_api_key = os.getenv("GEMINI_API_KEY")
-        self.groq_api_key = os.getenv("GROQ_API_KEY")
-        self.openai_api_key = os.getenv("OPENAI_API_KEY")
+
+    def call_gemini_llm(self, prompt: str) -> str | None:
+        if not self.gemini_api_key:
+            return None
+
+        models_to_try = [
+            "gemini-3.6-flash",
+            "gemini-3.1-pro-preview",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash"
+        ]
+
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.4,
+                "maxOutputTokens": 1000
+            }
+        }
+        data_bytes = json.dumps(payload).encode("utf-8")
+
+        for model_name in models_to_try:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={self.gemini_api_key}"
+            req = urllib.request.Request(
+                url,
+                data=data_bytes,
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=12) as response:
+                    res_data = json.loads(response.read().decode("utf-8"))
+                    candidates = res_data.get("candidates", [])
+                    if candidates and "content" in candidates[0]:
+                        parts = candidates[0]["content"].get("parts", [])
+                        if parts and "text" in parts[0]:
+                            return parts[0]["text"]
+            except Exception:
+                continue
+        return None
 
     def generate_advisory(self, startup_data: dict) -> dict:
         """
@@ -39,7 +80,6 @@ class LLMStartupCopilot:
         burn_multiple = round(burn_rate / max(revenue / 12, 1), 1)
         rev_per_employee = round(revenue / max(team_size, 1))
 
-        # Determine Tier
         if probability >= 0.70:
             tier = "Tier 1 — High Growth / Institutional Grade"
             verdict = "HIGH SUCCESS PROBABILITY"
@@ -53,19 +93,18 @@ class LLMStartupCopilot:
             verdict = "ELEVATED RISK"
             action_headline = "Immediate Burn Reduction & Capital Restructuring"
 
-        # Actionable recommendations
         action_plan = []
         if runway_months < 12:
             action_plan.append({
                 "category": "Capital Preservation",
                 "priority": "Critical",
-                "action": f"Extend current runway from {runway_months} months to 18+ months by cutting non-core SG&A spend or opening an insider bridge round."
+                "action": f"Extend current runway from {runway_months} months to 18+ months by reducing non-core expenditures or securing bridge financing."
             })
         else:
             action_plan.append({
                 "category": "Growth Acceleration",
                 "priority": "High",
-                "action": f"Deploy healthy {runway_months} months runway into high-ROI customer acquisition loops and core product iteration."
+                "action": f"Deploy healthy {runway_months} months runway into high-conversion customer acquisition and product iteration loops."
             })
 
         if burn_multiple > 2.5:
@@ -78,26 +117,48 @@ class LLMStartupCopilot:
             action_plan.append({
                 "category": "Capital Efficiency",
                 "priority": "Medium",
-                "action": f"Strong capital efficiency ({burn_multiple}x burn multiple). Highlight this metric prominently to prospective Series-A investors."
+                "action": f"Strong capital efficiency ({burn_multiple}x burn multiple). Highlight this metric prominently to prospective investors."
             })
 
         if competition >= 70:
             action_plan.append({
                 "category": "Competitive Moat",
                 "priority": "High",
-                "action": f"In a crowded {industry} market (competition score {competition}/100), double down on proprietary data, distribution partnerships, and enterprise contracts."
+                "action": f"In a crowded {industry} market (competition score {competition}/100), build proprietary technical moats and sticky enterprise workflows."
             })
         elif growth_rate < 25:
             action_plan.append({
                 "category": "Topline Growth",
                 "priority": "High",
-                "action": f"Annual growth rate ({growth_rate}%) is below venture benchmark (>40%). Run 30-day conversion rate experiments across primary sales funnel."
+                "action": f"Annual growth rate ({growth_rate}%) is below venture benchmark (>40%). Prioritize high-retention expansion loops."
             })
 
-        # Generate Executive Investment Memo
-        memo = f"""### 🏛️ Executive Investment Memo: {startup_name}
+        # Try Gemini API for customized narrative
+        gemini_prompt = f"""
+You are a senior Venture Capital Partner evaluating a startup investment.
+Write a concise, professional 3-paragraph executive investment memo for:
+Startup: {startup_name}
+Industry: {industry} ({country})
+Stage: {stage}
+Total Funding: ${funding:,.0f} | Monthly Burn: ${burn_rate:,.0f} | Runway: {runway_months} months
+Annual Revenue: ${revenue:,.0f} | Growth Rate: {growth_rate}% YoY
+ML Success Probability: {probability * 100:.1f}% ({verdict})
+Key Risk Factors: Competition {competition}/100, Burn multiple {burn_multiple}x.
 
-**Date:** {os.environ.get('CURRENT_DATE', 'Active Assessment')}  
+Format in clean markdown with sections:
+### 1. Executive Thesis
+### 2. Risk & Traction Diagnostics
+### 3. Investment Committee Verdict & Next Steps
+"""
+        gemini_memo = self.call_gemini_llm(gemini_prompt)
+
+        if gemini_memo:
+            memo = gemini_memo
+            source = "Google Gemini AI (Live LLM)"
+        else:
+            source = "Foundr.AI Core Intelligence"
+            memo = f"""### 🏛️ Executive Investment Memo: {startup_name}
+
 **Sector:** {industry} | **Geographic Base:** {country} | **Product Stage:** {stage}  
 **Assessment Tier:** {tier}  
 **Success Index:** {analysis['success_index']}/100 | **Model Success Probability:** {probability * 100:.1f}% ({prediction_label})
@@ -115,11 +176,11 @@ class LLMStartupCopilot:
 
 #### 3. Explainable Feature Attribution (Top Drivers)
 """
-        for exp in analysis.get("explanations", [])[:5]:
-            sign = "🟢 POSITIVE" if exp["direction"] == "positive" else "🔴 NEGATIVE"
-            memo += f"- **{exp['feature']} ({sign}):** Impact {exp['impact']:+.1f}% — {exp['detail']}\n"
+            for exp in analysis.get("explanations", [])[:5]:
+                sign = "🟢 POSITIVE" if exp["direction"] == "positive" else "🔴 NEGATIVE"
+                memo += f"- **{exp['feature']} ({sign}):** Impact {exp['impact']:+.1f}% — {exp['detail']}\n"
 
-        memo += f"""
+            memo += f"""
 #### 4. Strategic Recommendation for Leadership
 **Verdict:** [{verdict}]  
 *Key Focus:* {action_headline}.
@@ -133,6 +194,7 @@ class LLMStartupCopilot:
             "probability": probability,
             "success_index": analysis["success_index"],
             "investment_memo_markdown": memo,
+            "copilot_source": source,
             "action_plan": action_plan,
             "metrics": {
                 "runway_months": runway_months,
