@@ -82,15 +82,6 @@ const FigmaFooter = ({ onNavigateTab }) => {
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => onNavigateTab && onNavigateTab('funding')} 
-                  className="hover:text-emerald-600 transition-colors text-left flex items-center gap-1.5 font-bold text-slate-800"
-                >
-                  <span>Funding Radar</span>
-                  <span className="px-1.5 py-0.2 rounded-full bg-emerald-100 text-emerald-700 text-[9px] font-extrabold">$1.6B+</span>
-                </button>
-              </li>
-              <li>
                 <a href="http://127.0.0.1:8000/docs" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">
                   API Access (Docs)
                 </a>

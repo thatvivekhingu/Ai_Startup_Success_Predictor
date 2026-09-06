@@ -23,19 +23,6 @@ function App() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [serverStatus, setServerStatus] = useState(true);
 
-  // Sync hash routing e.g. #funding, #login, #student-hub
-  useEffect(() => {
-    const handleHash = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (['predict', 'dashboard', 'insights', 'student-hub', 'funding', 'login'].includes(hash)) {
-        setCurrentTab(hash);
-      }
-    };
-    handleHash();
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
-  }, []);
-
   useEffect(() => {
     const checkServer = async () => {
       try {
@@ -91,28 +78,14 @@ function App() {
     }
   };
 
-  if (currentTab === 'login') {
-    return (
-      <LoginPage
-        onNavigateHome={() => {
-          setCurrentTab('predict');
-          window.location.hash = 'predict';
-        }}
-      />
-    );
-  }
-
-  const isDarkPage = currentTab === 'funding';
-
   return (
-    <div className={`min-h-screen ${isDarkPage ? 'bg-[#070b14]' : 'bg-[#F8FAFC]'} text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white`}>
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       
       {/* Top Navbar matching Figma specs */}
       <Navbar
         currentTab={currentTab}
         setCurrentTab={(tab) => {
           setCurrentTab(tab);
-          window.location.hash = tab;
           if (tab !== 'predict') setPredictionResult(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
@@ -121,32 +94,21 @@ function App() {
         serverStatus={serverStatus}
       />
 
-      {currentTab === 'funding' ? (
-        <div className="flex-1">
-          <FundingDealsPage
-            onSelectStartupForPrediction={(startupName) => {
-              setCurrentTab('predict');
-              window.location.hash = 'predict';
-              setTimeout(() => scrollToForm(), 150);
-            }}
-          />
-        </div>
-      ) : (
-        /* Main Content Area */
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-16">
-          
-          {/* Error Alert */}
-          {error && (
-            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex justify-between items-center shadow-xs">
-              <span className="font-semibold">{error}</span>
-              <button 
-                onClick={() => setError(null)}
-                className="text-slate-500 hover:text-slate-800 text-xs font-bold underline ml-4"
-              >
-                Dismiss
-              </button>
-            </div>
-          )}
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-16">
+        
+        {/* Error Alert */}
+        {error && (
+          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex justify-between items-center shadow-xs">
+            <span className="font-semibold">{error}</span>
+            <button 
+              onClick={() => setError(null)}
+              className="text-slate-500 hover:text-slate-800 text-xs font-bold underline ml-4"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         {/* Dynamic Views */}
         {currentTab === 'predict' && (
@@ -251,19 +213,30 @@ function App() {
           <StudentProHub />
         )}
 
-        </main>
-      )}
+        {currentTab === 'funding' && (
+          <FundingDealsPage
+            onSelectStartupForPrediction={() => {
+              setCurrentTab('predict');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
 
-      {/* Exact Figma 4-Column Footer (hide on standalone login page for focus) */}
-      {currentTab !== 'login' && (
-        <FigmaFooter
-          onNavigateTab={(tab) => {
-            setCurrentTab(tab);
-            window.location.hash = tab;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-        />
-      )}
+        {currentTab === 'login' && (
+          <LoginPage
+            onNavigateHome={() => setCurrentTab('predict')}
+          />
+        )}
+
+      </main>
+
+      {/* Exact Figma 4-Column Footer */}
+      <FigmaFooter
+        onNavigateTab={(tab) => {
+          setCurrentTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
 
       {/* Auth Modal */}
       <AuthModal
