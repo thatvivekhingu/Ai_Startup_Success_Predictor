@@ -42,6 +42,8 @@ class PredictionInput(BaseModel):
     team_size: Optional[int] = 5
     has_accelerator: Optional[bool] = False
     patent_count: Optional[int] = 0
+    is_gujarat_based: Optional[bool] = False
+    gujarat_district: Optional[str] = None
 
 class PredictionOutput(BaseModel):
     id: Optional[int] = None
@@ -57,6 +59,7 @@ class PredictionOutput(BaseModel):
     risk_factors: List[str]
     recommendations: List[str]
     feature_contributions: List[Dict[str, Any]]
+    gujarat_insights: Optional[Dict[str, Any]] = None
     created_at: Optional[datetime] = None
 
 class PredictionHistoryItem(BaseModel):

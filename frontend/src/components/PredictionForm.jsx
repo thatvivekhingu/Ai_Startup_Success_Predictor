@@ -14,54 +14,72 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { predictionAPI } from '../api';
+import { 
+  RazorpayLogo, 
+  ZerodhaLogo, 
+  ZomatoLogo, 
+  ZeptoLogo, 
+  LenskartLogo, 
+  PostmanLogo, 
+  MatterEVLogo, 
+  PetpoojaLogo,
+  BeardoLogo 
+} from './StartupLogos';
 
 const DEFAULT_FORM = {
-  startup_name: 'NexusAI Solutions',
-  primary_category: 'Software',
-  country_code: 'USA',
-  funding_total_usd: 8500000,
-  funding_rounds: 2,
-  founded_year: 2022,
-  first_funding_year: 2023,
-  last_funding_year: 2024,
-  team_size: 14,
-  has_accelerator: true,
-  patent_count: 1
+  startup_name: 'Zerodha Broking (Bootstrapped FinTech)',
+  primary_category: 'Finance',
+  country_code: 'IND',
+  funding_total_usd: 100000,
+  funding_rounds: 1,
+  founded_year: 2010,
+  first_funding_year: 2011,
+  last_funding_year: 2011,
+  team_size: 120,
+  has_accelerator: false,
+  patent_count: 2,
+  is_gujarat_based: false,
+  gujarat_district: 'Ahmedabad'
 };
 
+const GUJARAT_DISTRICTS = [
+  'Ahmedabad', 'Gandhinagar', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Kutch', 'Other'
+];
+
 const CATEGORIES = [
-  'Software', 'Biotechnology', 'E-Commerce', 'Mobile', 'Enterprise', 
-  'Curated Web', 'Health Care', 'Games', 'Advertising', 'Analytics', 
-  'Hardware', 'Clean Technology', 'Finance', 'Education', 'Social Media',
-  'Semiconductors', 'Security', 'Manufacturing', 'Hospitality', 'Real Estate', 'Other'
+  'Finance', 'E-Commerce', 'Software', 'Clean Technology', 'Biotechnology', 
+  'Mobile', 'Enterprise', 'Curated Web', 'Health Care', 'Games', 'Advertising', 'Analytics', 
+  'Hardware', 'Education', 'Social Media', 'Semiconductors', 'Security', 'Manufacturing', 
+  'Hospitality', 'Real Estate', 'Other'
 ];
 
 const COUNTRIES = [
+  { code: 'IND', label: 'India (IND) 🇮🇳' },
   { code: 'USA', label: 'United States (USA)' },
   { code: 'GBR', label: 'United Kingdom (GBR)' },
   { code: 'CAN', label: 'Canada (CAN)' },
-  { code: 'CHN', label: 'China (CHN)' },
-  { code: 'IND', label: 'India (IND)' },
   { code: 'DEU', label: 'Germany (DEU)' },
   { code: 'FRA', label: 'France (FRA)' },
   { code: 'ISR', label: 'Israel (ISR)' },
+  { code: 'CHN', label: 'China (CHN)' },
   { code: 'ESP', label: 'Spain (ESP)' },
   { code: 'AUS', label: 'Australia (AUS)' },
   { code: 'Other', label: 'Other Regions' }
 ];
 
 const FUNDING_SHORTCUTS = [
-  { label: '$250K (Pre-Seed)', val: 250000 },
-  { label: '$1.5M (Seed)', val: 1500000 },
-  { label: '$6M (Series A)', val: 6000000 },
-  { label: '$20M (Series B)', val: 20000000 },
-  { label: '$60M+ (Growth)', val: 60000000 }
+  { label: '₹2.5L / $30K (SSIP Student Grant)', val: 30000 },
+  { label: '₹2 Cr / $250K (Pre-Seed)', val: 250000 },
+  { label: '₹12 Cr / $1.5M (Seed)', val: 1500000 },
+  { label: '₹50 Cr / $6M (Series A)', val: 6000000 },
+  { label: '₹165 Cr / $20M (Series B)', val: 20000000 },
+  { label: '₹500 Cr+ / $60M+ (Growth/Unicorn)', val: 60000000 }
 ];
 
 const PredictionForm = ({ onPredict, loading }) => {
   const [formData, setFormData] = useState(DEFAULT_FORM);
   const [presets, setPresets] = useState([]);
-  const [activePreset, setActivePreset] = useState(null);
+  const [activePreset, setActivePreset] = useState('zerodha-bootstrapped');
 
   useEffect(() => {
     const fetchPresets = async () => {
@@ -86,7 +104,7 @@ const PredictionForm = ({ onPredict, loading }) => {
   const handleApplyPreset = (preset) => {
     setActivePreset(preset.id);
     setFormData({
-      startup_name: preset.name,
+      startup_name: preset.name.split(' – ')[0],
       primary_category: preset.primary_category,
       country_code: preset.country_code,
       funding_total_usd: preset.funding_total_usd,
@@ -96,7 +114,9 @@ const PredictionForm = ({ onPredict, loading }) => {
       last_funding_year: preset.last_funding_year,
       team_size: preset.team_size,
       has_accelerator: preset.has_accelerator,
-      patent_count: preset.patent_count
+      patent_count: preset.patent_count,
+      is_gujarat_based: Boolean(preset.is_gujarat_based),
+      gujarat_district: preset.gujarat_district || 'Ahmedabad'
     });
   };
 
@@ -110,36 +130,82 @@ const PredictionForm = ({ onPredict, loading }) => {
     onPredict(formData);
   };
 
+  const renderStartupMiniLogo = (id) => {
+    switch (id) {
+      case 'zerodha-bootstrapped':
+        return <ZerodhaLogo className="h-4" />;
+      case 'zepto-quickcommerce':
+        return <ZeptoLogo className="h-4" />;
+      case 'razorpay-payments':
+        return <RazorpayLogo className="h-4" />;
+      case 'zomato-foodtech':
+        return <ZomatoLogo className="h-4" />;
+      case 'lenskart-omnichannel':
+        return <LenskartLogo className="h-4" />;
+      case 'postman-saas':
+        return <PostmanLogo className="h-4" />;
+      case 'matter-motor-works':
+        return <MatterEVLogo className="h-4" />;
+      case 'petpooja-saas':
+        return <PetpoojaLogo className="h-4" />;
+      case 'beardo-d2c':
+        return <BeardoLogo className="h-4" />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div id="prediction-form-section" className="space-y-6">
       
-      {/* Archetype Presets Bar */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+      {/* Archetype Presets Bar: Real Indian Startup Success Cases */}
+      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 rounded-full bg-blue-600" />
-            <span className="text-xs font-bold text-slate-800 tracking-wider uppercase">
-              1-Click Benchmark Archetypes
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse" />
+            <span className="text-xs font-black text-slate-900 tracking-wider uppercase flex items-center space-x-1.5">
+              <span>🇮🇳 Real Indian Startup Success Benchmarks</span>
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">Live Data</span>
             </span>
           </div>
-          <span className="text-xs text-slate-500">Auto-fill startup operational metrics</span>
+          <span className="text-xs text-slate-500 font-medium">
+            Click any verified Indian Unicorn / Gujarat success to auto-populate metrics
+          </span>
         </div>
         
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
           {presets.map((p) => (
             <button
               key={p.id}
               type="button"
               onClick={() => handleApplyPreset(p)}
-              className={`text-left p-3 rounded-xl border transition-all ${
+              className={`text-left p-3.5 rounded-xl border transition-all flex flex-col justify-between space-y-2 ${
                 activePreset === p.id
-                  ? 'bg-blue-50 border-blue-500 text-blue-950 shadow-xs ring-1 ring-blue-500'
-                  : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-blue-300 hover:bg-white'
+                  ? 'bg-blue-50/90 border-blue-500 text-blue-950 shadow-xs ring-1 ring-blue-500'
+                  : 'bg-slate-50/70 border-slate-200 text-slate-800 hover:border-blue-400 hover:bg-white'
               }`}
             >
-              <div className="text-xs font-bold truncate">{p.name}</div>
-              <div className="text-[11px] text-slate-500 mt-0.5 font-mono font-medium">
-                ${(p.funding_total_usd / 1e6).toFixed(1)}M • {p.primary_category}
+              <div className="flex items-center justify-between gap-2">
+                <div className="h-6 flex items-center">
+                  {renderStartupMiniLogo(p.id) || (
+                    <span className="text-xs font-bold truncate text-slate-950">{p.name.split(' – ')[0]}</span>
+                  )}
+                </div>
+                {p.is_gujarat_based ? (
+                  <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold shrink-0">Gujarat</span>
+                ) : (
+                  <span className="px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold shrink-0">Unicorn</span>
+                )}
+              </div>
+              <div>
+                <div className="text-[11px] text-blue-700 font-bold truncate">
+                  {p.valuation || (p.funding_total_usd > 1e6 ? `$${(p.funding_total_usd/1e6).toFixed(0)}M Funded` : `$${p.funding_total_usd.toLocaleString()} Funded`)}
+                </div>
+                {p.founder && (
+                  <div className="text-[10px] text-slate-500 truncate mt-0.5 font-medium">
+                    Founder: {p.founder}
+                  </div>
+                )}
               </div>
             </button>
           ))}
@@ -216,7 +282,13 @@ const PredictionForm = ({ onPredict, loading }) => {
               <Globe2 className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <select
                 value={formData.country_code}
-                onChange={(e) => handleChange('country_code', e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  handleChange('country_code', val);
+                  if (val !== 'IND') {
+                    handleChange('is_gujarat_based', false);
+                  }
+                }}
                 className="w-full bg-slate-50/70 border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 font-semibold focus:bg-white transition-all"
               >
                 {COUNTRIES.map(c => (
@@ -225,6 +297,69 @@ const PredictionForm = ({ onPredict, loading }) => {
               </select>
             </div>
           </div>
+
+          {/* Gujarat Innovation Track Toggle Card */}
+          <div className="md:col-span-2 p-4 rounded-xl border border-indigo-200 bg-gradient-to-r from-indigo-50/90 via-blue-50/40 to-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xs">
+            <div className="flex items-center space-x-3">
+              <span className="text-2xl">🇮🇳</span>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-extrabold text-indigo-950 uppercase tracking-wider">
+                    Gujarat Startup Innovation Track
+                  </span>
+                  <span className="bg-indigo-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
+                    STI Policy 2026–31
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Activate district-level incubator matchmaking (iCreate, GUSEC, PDEU) & ₹1,000 Cr State Innovation Fund evaluation.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                const nextState = !formData.is_gujarat_based;
+                handleChange('is_gujarat_based', nextState);
+                if (nextState) {
+                  handleChange('country_code', 'IND');
+                }
+              }}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center space-x-1.5 shrink-0 ${
+                formData.is_gujarat_based
+                  ? 'bg-indigo-600 text-white shadow-indigo-200'
+                  : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <span>{formData.is_gujarat_based ? '✓ Gujarat Track Active' : 'Activate Gujarat Track'}</span>
+            </button>
+          </div>
+
+          {/* Conditional District Dropdown if Gujarat Track is Active */}
+          {formData.is_gujarat_based && (
+            <div className="md:col-span-2 p-4 rounded-xl bg-indigo-50/40 border border-indigo-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-indigo-950 mb-1.5 uppercase tracking-wider">
+                  Gujarat District Innovation Hub
+                </label>
+                <select
+                  value={formData.gujarat_district}
+                  onChange={(e) => handleChange('gujarat_district', e.target.value)}
+                  className="w-full bg-white border border-indigo-300 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 font-bold focus:ring-2 focus:ring-indigo-500"
+                >
+                  {GUJARAT_DISTRICTS.map(dist => (
+                    <option key={dist} value={dist}>{dist} District Hub</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex flex-col justify-center text-[11px] text-slate-600 bg-white p-3 rounded-lg border border-indigo-100">
+                <span className="font-bold text-indigo-700">Matched Policy Schemes:</span>
+                <span>• Gujarat STI Policy 2026–31 (₹1,000 Cr DeepTech Fund)</span>
+                <span>• SSIP 2.0 / i-Hub Incubation Support / Dholera Semicon Corridor</span>
+              </div>
+            </div>
+          )}
 
           {/* Total Funding Raised */}
           <div className="md:col-span-2">

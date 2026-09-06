@@ -153,6 +153,115 @@ const PredictionResult = ({ result, onNewPrediction }) => {
         </div>
       )}
 
+      {/* Gujarat STI Policy 2026-31 & Ecosystem Alignment Card */}
+      {result.gujarat_insights && (
+        <div className="bg-gradient-to-br from-indigo-900 via-slate-900 to-blue-950 text-white p-6 sm:p-8 rounded-3xl border border-indigo-500/30 shadow-xl space-y-6 relative overflow-hidden">
+          {/* Subtle Background Glow */}
+          <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-indigo-500/20 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-indigo-800/60 pb-5">
+            <div className="space-y-1">
+              <div className="flex items-center space-x-2">
+                <span className="text-xl">🇮🇳</span>
+                <span className="text-xs font-black uppercase tracking-widest text-indigo-300">
+                  Gujarat Startup Ecosystem & Policy Intelligence
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-400/40 text-[9px] font-bold text-indigo-200 uppercase tracking-wider">
+                  Active Corridor
+                </span>
+              </div>
+              <h2 className="text-2xl font-black font-display tracking-tight text-white">
+                {result.gujarat_insights.district} Regional Innovation Hub ({result.gujarat_insights.tier})
+              </h2>
+            </div>
+
+            <div className="flex items-center space-x-3 bg-indigo-950/80 px-4 py-2.5 rounded-2xl border border-indigo-700/50">
+              <div className="text-right">
+                <div className="text-[10px] text-indigo-300 uppercase font-bold">District Density</div>
+                <div className="text-xs font-medium text-slate-300">{result.gujarat_insights.startup_count} Startups</div>
+              </div>
+              <div className="text-xl font-black text-amber-400 font-mono">
+                {result.gujarat_insights.density_score}/10
+              </div>
+            </div>
+          </div>
+
+          {/* Matched Government Schemes & Grants */}
+          <div className="space-y-3">
+            <div className="text-xs font-extrabold uppercase tracking-wider text-indigo-300 flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span>Eligible Gujarat Government Schemes (STI Policy 2026–31 / SSIP / i-Hub)</span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {result.gujarat_insights.eligible_schemes?.map((scheme, idx) => (
+                <div key={idx} className="bg-slate-800/60 border border-indigo-500/20 p-4 rounded-2xl space-y-2.5 hover:border-indigo-400/40 transition-colors">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="text-sm font-bold text-white font-display leading-snug">
+                      {scheme.name}
+                    </h4>
+                    <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono font-bold shrink-0">
+                      {scheme.fund_pool}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                    {scheme.description}
+                  </p>
+                  <div className="pt-1 space-y-1">
+                    {scheme.incentives?.slice(0, 2).map((inc, i) => (
+                      <div key={i} className="flex items-center space-x-1.5 text-[11px] text-indigo-200">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span>{inc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Matched Regional Incubators & Venture Angels */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            
+            {/* Incubators */}
+            <div className="bg-indigo-950/40 p-4 rounded-2xl border border-indigo-800/50 space-y-2.5">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-300 block">
+                Matched {result.gujarat_insights.district} Incubators & Prototyping Labs:
+              </span>
+              <div className="space-y-1.5">
+                {result.gujarat_insights.matched_incubators?.map((inc, idx) => (
+                  <div key={idx} className="text-xs text-slate-200 bg-slate-900/60 p-2 rounded-lg border border-indigo-900/40 flex flex-col">
+                    <span className="font-bold text-white">{inc.name}</span>
+                    <span className="text-[10px] text-indigo-300">{inc.focus}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Investors */}
+            <div className="bg-indigo-950/40 p-4 rounded-2xl border border-indigo-800/50 space-y-2.5">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-300 block">
+                Regional Angel Networks & Institutional VCs:
+              </span>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {result.gujarat_insights.local_investors?.map((inv, idx) => (
+                  <span key={idx} className="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-indigo-600/40 text-xs font-semibold text-slate-200">
+                    💼 {inv}
+                  </span>
+                ))}
+              </div>
+              <div className="text-[11px] text-slate-400 pt-2 italic">
+                Direct syndicate access available through TiE Ahmedabad, GVFL, and Surat Angels.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
       {/* Strengths & Risks */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         

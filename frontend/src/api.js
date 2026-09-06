@@ -37,4 +37,10 @@ export const analyticsAPI = {
   getSummary: () => api.get('/api/analytics/summary'),
 };
 
+export const gujaratAPI = {
+  getNews: (limit = 12) => api.get(`/api/gujarat-ecosystem/news?limit=${limit}`),
+  getSchemes: () => api.get('/api/gujarat-ecosystem/schemes'),
+  getDistrictsAndHubs: () => api.get('/api/gujarat-ecosystem/districts-and-hubs'),
+};
+
 export default api;

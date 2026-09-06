@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
+import FigmaLandingSections from './components/FigmaLandingSections';
+import FigmaFooter from './components/FigmaFooter';
 import PredictionForm from './components/PredictionForm';
 import PredictionResult from './components/PredictionResult';
 import Dashboard from './components/Dashboard';
 import ModelInsights from './components/ModelInsights';
+import StudentProHub from './components/StudentProHub';
 import AuthModal from './components/AuthModal';
+import UserProfileModal from './components/UserProfileModal';
 import { predictionAPI } from './api';
 
 function App() {
@@ -14,6 +18,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [serverStatus, setServerStatus] = useState(true);
 
   useEffect(() => {
@@ -74,19 +79,21 @@ function App() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       
-      {/* Top Navbar */}
+      {/* Top Navbar matching Figma specs */}
       <Navbar
         currentTab={currentTab}
         setCurrentTab={(tab) => {
           setCurrentTab(tab);
           if (tab !== 'predict') setPredictionResult(null);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onOpenAuth={() => setIsAuthOpen(true)}
+        onOpenProfile={() => setIsProfileOpen(true)}
         serverStatus={serverStatus}
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-16">
         
         {/* Error Alert */}
         {error && (
@@ -103,7 +110,7 @@ function App() {
 
         {/* Dynamic Views */}
         {currentTab === 'predict' && (
-          <div className="space-y-12">
+          <div className="space-y-16">
             
             {predictionResult ? (
               <PredictionResult
@@ -112,30 +119,78 @@ function App() {
               />
             ) : (
               <>
-                {/* Hero Section */}
-                <HeroSection onStartClick={scrollToForm} />
-
-                {/* Sub-headline Section */}
-                <div className="text-center max-w-3xl mx-auto pt-4 space-y-3">
-                  <div className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-700">
-                    Startup Valuation & Success Forecaster
-                  </div>
-                  <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display tracking-tight">
-                    Benchmark your venture. <br />
-                    <span className="text-blue-600">
-                      Discover funding readiness & risk factors.
-                    </span>
-                  </h2>
-                  <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto font-medium">
-                    Select a startup benchmark archetype below or customize your financial and operational metrics to receive instant valuation readiness, runway health, and exit probability.
-                  </p>
-                </div>
-
-                {/* Interactive Prediction Form */}
-                <PredictionForm
-                  onPredict={handlePredict}
-                  loading={loading}
+                {/* 1. Hero Section with Live Interactive Floating Dashboard */}
+                <HeroSection 
+                  onStartClick={scrollToForm} 
+                  onWatchDemo={scrollToForm} 
                 />
+
+                {/* 2. Figma Landing Sections (Metrics Strip, Logos, Mid-Section, Steps, Use Cases, Testimonials, Bottom CTA) */}
+                <FigmaLandingSections
+                  onEvaluateClick={scrollToForm}
+                  onExploreClick={scrollToForm}
+                  onStudentHubClick={() => {
+                    setCurrentTab('student-hub');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+
+                {/* 3. Predictor Studio Live Form Section */}
+                <div id="prediction-form-section" className="pt-8 space-y-8">
+                  <div className="text-center max-w-3xl mx-auto space-y-3">
+                    <div className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-blue-700">
+                      Interactive Venture Evaluation Studio
+                    </div>
+                    <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-display tracking-tight">
+                      Benchmark your venture. <br />
+                      <span className="text-blue-600">
+                        Discover funding readiness & risk factors.
+                      </span>
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto font-medium">
+                      Select a startup benchmark archetype (e.g. Zepto, Zerodha, Early-Stage AI) or customize metrics to generate instant success probability, valuation readiness, and risk analysis.
+                    </p>
+                  </div>
+
+                  {/* Figma Student Pro Hub Callout Banner */}
+                  <div className="max-w-4xl mx-auto p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-950 via-slate-900 to-blue-950 text-white border border-indigo-500/30 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center space-x-3.5 text-center sm:text-left">
+                      <div className="w-11 h-11 rounded-xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-indigo-300 shrink-0 text-xl">
+                        🎓
+                      </div>
+                      <div>
+                        <div className="flex items-center justify-center sm:justify-start space-x-2">
+                          <span className="text-xs font-black uppercase tracking-wider text-white">
+                            Student Innovator PRO Studio
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full bg-indigo-500/30 border border-indigo-400/40 text-[9px] font-bold text-indigo-200 uppercase tracking-widest">
+                            SSIP 2.0 • TRL 1-9 • DPIIT
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-300 mt-0.5">
+                          1-Click ₹2.5 Lakhs SSIP 2.0 grant drafter, Campus-to-Market TRL calculator, and Startup India 80-IAC tax exemption benefits.
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setCurrentTab('student-hub');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }}
+                      className="px-4 py-2 rounded-xl bg-white text-slate-950 hover:bg-indigo-50 font-bold text-xs shrink-0 transition-all shadow-md active:scale-95 flex items-center space-x-1"
+                    >
+                      <span>Launch Student Hub</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+
+                  {/* Interactive Prediction Form */}
+                  <PredictionForm
+                    onPredict={handlePredict}
+                    loading={loading}
+                  />
+                </div>
               </>
             )}
 
@@ -152,25 +207,34 @@ function App() {
           <ModelInsights />
         )}
 
+        {currentTab === 'student-hub' && (
+          <StudentProHub />
+        )}
+
       </main>
 
-      {/* Corporate Footer */}
-      <footer className="border-t border-slate-200 bg-white py-8 text-center text-xs text-slate-500 mt-12">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-2">
-            <span className="font-extrabold text-slate-900 font-display text-sm">StartupPulse AI</span>
-            <span className="text-slate-400 font-medium">| Institutional Venture Intelligence</span>
-          </div>
-          <div className="text-xs text-slate-400 font-medium">
-            Trained on 66,000+ Venture Milestones • Powered by Scikit-learn & FastAPI
-          </div>
-        </div>
-      </footer>
+      {/* Exact Figma 4-Column Footer */}
+      <FigmaFooter
+        onNavigateTab={(tab) => {
+          setCurrentTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+      />
 
       {/* Auth Modal */}
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
+      />
+
+      {/* User Profile Modal */}
+      <UserProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        onNavigateTab={(tab) => {
+          setCurrentTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
       />
 
     </div>

@@ -170,6 +170,58 @@ class StartupPredictor:
             {"name": "Operational Velocity", "value": f"{startup_age_years:.1f} yrs age", "impact": "Positive" if startup_age_years <= 5.0 else "Neutral"}
         ]
 
+        # Gujarat Startup Innovation Track Intelligence
+        gujarat_insights = None
+        if input_data.is_gujarat_based or (input_data.country_code == 'IND' and input_data.gujarat_district):
+            district = input_data.gujarat_district or "Ahmedabad"
+            
+            # Import district directory
+            try:
+                from .routers.gujarat_router import GUJARAT_DISTRICTS, GUJARAT_SCHEMES
+            except ImportError:
+                from routers.gujarat_router import GUJARAT_DISTRICTS, GUJARAT_SCHEMES
+
+            dist_info = GUJARAT_DISTRICTS.get(district, GUJARAT_DISTRICTS.get("Other", {}))
+            
+            # Match Eligible Schemes based on stage and sector
+            eligible_schemes = []
+            if input_data.funding_total_usd < 200_000:
+                eligible_schemes.append(GUJARAT_SCHEMES[1])  # SSIP 2.0 (₹2.5 Lakhs prototype grant)
+                eligible_schemes.append(GUJARAT_SCHEMES[2])  # i-Hub Seed Support (₹30 Lakhs)
+            
+            # DeepTech, Semiconductor, CleanTech matching STI Policy 2026-31
+            deeptech_cats = ["Semiconductors", "Clean Technology", "Hardware", "Biotechnology", "Enterprise", "Manufacturing"]
+            if input_data.primary_category in deeptech_cats or "Semicon" in input_data.primary_category or "Green" in input_data.primary_category:
+                eligible_schemes.append(GUJARAT_SCHEMES[0])  # STI Policy 2026-31 (₹1,000 Cr Fund)
+                if input_data.primary_category in ["Semiconductors", "Hardware"]:
+                    eligible_schemes.append(GUJARAT_SCHEMES[3])  # Dholera Semicon Policy
+            
+            if input_data.funding_total_usd >= 100_000:
+                eligible_schemes.append(GUJARAT_SCHEMES[4])  # GVFL Venture Capital Fund
+
+            # Deduplicate schemes by id
+            seen_schemes = set()
+            unique_schemes = []
+            for s in eligible_schemes:
+                if s["id"] not in seen_schemes:
+                    seen_schemes.add(s["id"])
+                    unique_schemes.append(s)
+
+            gujarat_insights = {
+                "district": district,
+                "tier": dist_info.get("tier", "Emerging Hub"),
+                "density_score": dist_info.get("density_score", 7.0),
+                "startup_count": dist_info.get("startup_count", "500+"),
+                "matched_incubators": dist_info.get("incubators", []),
+                "local_investors": dist_info.get("investors", []),
+                "eligible_schemes": unique_schemes,
+                "policy_alignment": "Gujarat STI Policy 2026–31 Priority Sector" if input_data.primary_category in deeptech_cats else "General Innovation & Startup Gujarat Framework"
+            }
+
+            # Inject Gujarat specific strength & recommendation
+            strengths.append(f"State Policy Alignment: Eligible for {len(unique_schemes)} Gujarat Government startup schemes ({district} Innovation Hub)")
+            recommendations.append(f"Apply for Gujarat STI Policy 2026–31 / i-Hub incubator grant to access non-dilutive capital and state R&D labs.")
+
         return {
             "startup_name": input_data.startup_name,
             "primary_category": input_data.primary_category,
@@ -182,7 +234,8 @@ class StartupPredictor:
             "strengths": strengths,
             "risk_factors": risk_factors,
             "recommendations": recommendations,
-            "feature_contributions": feature_contributions
+            "feature_contributions": feature_contributions,
+            "gujarat_insights": gujarat_insights
         }
 
 predictor_instance = StartupPredictor()
