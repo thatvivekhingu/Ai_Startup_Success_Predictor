@@ -20,7 +20,14 @@ api.interceptors.request.use((config) => {
 export const authAPI = {
   register: (data) => api.post('/api/auth/register', data),
   login: (data) => api.post('/api/auth/login', data),
+  socialLogin: (data) => api.post('/api/auth/social', data),
   getMe: () => api.get('/api/auth/me'),
+  updateProfile: (data) => api.put('/api/auth/profile', data),
+};
+
+export const fundingAPI = {
+  getDeals: (params) => api.get('/api/funding/deals', { params }),
+  getStats: () => api.get('/api/funding/stats'),
 };
 
 export const predictionAPI = {
