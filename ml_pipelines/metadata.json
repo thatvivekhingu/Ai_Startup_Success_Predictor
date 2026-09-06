@@ -1,0 +1,373 @@
+{
+  "best_model": "Gradient Boosting",
+  "models_comparison": {
+    "Logistic Regression": {
+      "Accuracy": 0.7360329958755155,
+      "Precision": 0.7782101167315175,
+      "Recall": 0.704721634954193,
+      "F1-Score": 0.7396449704142012,
+      "ROC-AUC": 0.8108282624997741
+    },
+    "Random Forest": {
+      "Accuracy": 0.7536557930258717,
+      "Precision": 0.7756874095513748,
+      "Recall": 0.755461592670895,
+      "F1-Score": 0.7654409139593003,
+      "ROC-AUC": 0.8297766913319239
+    },
+    "Gradient Boosting": {
+      "Accuracy": 0.7547806524184477,
+      "Precision": 0.7514792899408284,
+      "Recall": 0.8054968287526427,
+      "F1-Score": 0.7775510204081633,
+      "ROC-AUC": 0.8325108757521548
+    }
+  },
+  "metrics": {
+    "Accuracy": 0.7547806524184477,
+    "Precision": 0.7514792899408284,
+    "Recall": 0.8054968287526427,
+    "F1-Score": 0.7775510204081633,
+    "ROC-AUC": 0.8325108757521548
+  },
+  "top_features": [
+    {
+      "feature": "funding_total_usd_clean",
+      "importance": 0.4881
+    },
+    {
+      "feature": "startup_age_years",
+      "importance": 0.1615
+    },
+    {
+      "feature": "funding_duration_years",
+      "importance": 0.0767
+    },
+    {
+      "feature": "country_code_clean_Other",
+      "importance": 0.0711
+    },
+    {
+      "feature": "time_to_first_funding_years",
+      "importance": 0.0599
+    },
+    {
+      "feature": "country_code_clean_USA",
+      "importance": 0.0297
+    },
+    {
+      "feature": "country_code_clean_RUS",
+      "importance": 0.0158
+    },
+    {
+      "feature": "funding_rounds_clean",
+      "importance": 0.0122
+    },
+    {
+      "feature": "primary_category_clean_Other",
+      "importance": 0.0096
+    },
+    {
+      "feature": "primary_category_clean_Analytics",
+      "importance": 0.009
+    },
+    {
+      "feature": "primary_category_clean_Clean Technology",
+      "importance": 0.0059
+    },
+    {
+      "feature": "country_code_clean_CAN",
+      "importance": 0.0059
+    },
+    {
+      "feature": "primary_category_clean_Enterprise Software",
+      "importance": 0.0036
+    },
+    {
+      "feature": "country_code_clean_FRA",
+      "importance": 0.0033
+    },
+    {
+      "feature": "primary_category_clean_Finance",
+      "importance": 0.003
+    }
+  ],
+  "num_features": [
+    "funding_total_usd_clean",
+    "funding_rounds_clean",
+    "funding_duration_years",
+    "time_to_first_funding_years",
+    "startup_age_years"
+  ],
+  "cat_features": [
+    "primary_category_clean",
+    "country_code_clean"
+  ],
+  "top_categories": [
+    "Biotechnology",
+    "Other",
+    "Software",
+    "Curated Web",
+    "Advertising",
+    "E-Commerce",
+    "Mobile",
+    "Enterprise Software",
+    "Games",
+    "Analytics",
+    "Health Care",
+    "Clean Technology",
+    "Hardware + Software",
+    "Semiconductors",
+    "Apps",
+    "Finance",
+    "Security",
+    "Health and Wellness",
+    "Cloud Computing",
+    "Web Hosting",
+    "Internet",
+    "Social Media",
+    "Business Services",
+    "Consulting",
+    "Android"
+  ],
+  "top_countries": [
+    "USA",
+    "Other",
+    "GBR",
+    "CAN",
+    "ISR",
+    "RUS",
+    "DEU",
+    "FRA",
+    "CHN",
+    "IND",
+    "ESP",
+    "SWE",
+    "AUS",
+    "BRA",
+    "NLD",
+    "IRL",
+    "JPN",
+    "SGP",
+    "CHE",
+    "DNK"
+  ],
+  "category_stats": {
+    "Biotechnology": {
+      "total": 1102,
+      "success_rate": 0.757,
+      "avg_funding": 52587444.77
+    },
+    "Other": {
+      "total": 1086,
+      "success_rate": 0.122,
+      "avg_funding": 4683173.31
+    },
+    "Software": {
+      "total": 966,
+      "success_rate": 0.646,
+      "avg_funding": 16816816.06
+    },
+    "Curated Web": {
+      "total": 751,
+      "success_rate": 0.447,
+      "avg_funding": 10808920.28
+    },
+    "Advertising": {
+      "total": 590,
+      "success_rate": 0.614,
+      "avg_funding": 26627886.47
+    },
+    "E-Commerce": {
+      "total": 443,
+      "success_rate": 0.492,
+      "avg_funding": 26467497.21
+    },
+    "Mobile": {
+      "total": 417,
+      "success_rate": 0.6,
+      "avg_funding": 21294761.73
+    },
+    "Enterprise Software": {
+      "total": 367,
+      "success_rate": 0.768,
+      "avg_funding": 23177607.07
+    },
+    "Games": {
+      "total": 308,
+      "success_rate": 0.487,
+      "avg_funding": 12221433.06
+    },
+    "Analytics": {
+      "total": 285,
+      "success_rate": 0.733,
+      "avg_funding": 18460653.33
+    },
+    "Health Care": {
+      "total": 273,
+      "success_rate": 0.634,
+      "avg_funding": 39814933.68
+    },
+    "Clean Technology": {
+      "total": 266,
+      "success_rate": 0.515,
+      "avg_funding": 74883145.11
+    },
+    "Hardware + Software": {
+      "total": 233,
+      "success_rate": 0.614,
+      "avg_funding": 28972099.42
+    },
+    "Semiconductors": {
+      "total": 216,
+      "success_rate": 0.75,
+      "avg_funding": 113647725.17
+    },
+    "Apps": {
+      "total": 210,
+      "success_rate": 0.338,
+      "avg_funding": 11859728.33
+    },
+    "Finance": {
+      "total": 195,
+      "success_rate": 0.518,
+      "avg_funding": 18262859.49
+    },
+    "Security": {
+      "total": 149,
+      "success_rate": 0.772,
+      "avg_funding": 26431599.54
+    },
+    "Health and Wellness": {
+      "total": 137,
+      "success_rate": 0.657,
+      "avg_funding": 35637803.13
+    },
+    "Cloud Computing": {
+      "total": 133,
+      "success_rate": 0.669,
+      "avg_funding": 18389920.89
+    },
+    "Web Hosting": {
+      "total": 132,
+      "success_rate": 0.788,
+      "avg_funding": 40647228.84
+    },
+    "Internet": {
+      "total": 126,
+      "success_rate": 0.373,
+      "avg_funding": 116099697.7
+    },
+    "Social Media": {
+      "total": 112,
+      "success_rate": 0.402,
+      "avg_funding": 4708284.41
+    },
+    "Business Services": {
+      "total": 111,
+      "success_rate": 0.486,
+      "avg_funding": 35051121.0
+    },
+    "Consulting": {
+      "total": 104,
+      "success_rate": 0.5,
+      "avg_funding": 13012745.83
+    },
+    "Android": {
+      "total": 103,
+      "success_rate": 0.553,
+      "avg_funding": 6488559.88
+    }
+  },
+  "country_stats": {
+    "USA": {
+      "total": 8172,
+      "success_rate": 0.644
+    },
+    "Other": {
+      "total": 2491,
+      "success_rate": 0.208
+    },
+    "GBR": {
+      "total": 540,
+      "success_rate": 0.48
+    },
+    "CAN": {
+      "total": 395,
+      "success_rate": 0.6
+    },
+    "ISR": {
+      "total": 205,
+      "success_rate": 0.624
+    },
+    "RUS": {
+      "total": 183,
+      "success_rate": 0.077
+    },
+    "DEU": {
+      "total": 181,
+      "success_rate": 0.575
+    },
+    "FRA": {
+      "total": 181,
+      "success_rate": 0.497
+    },
+    "CHN": {
+      "total": 180,
+      "success_rate": 0.633
+    },
+    "IND": {
+      "total": 129,
+      "success_rate": 0.465
+    },
+    "ESP": {
+      "total": 94,
+      "success_rate": 0.383
+    },
+    "SWE": {
+      "total": 85,
+      "success_rate": 0.435
+    },
+    "AUS": {
+      "total": 83,
+      "success_rate": 0.458
+    },
+    "BRA": {
+      "total": 75,
+      "success_rate": 0.227
+    },
+    "NLD": {
+      "total": 70,
+      "success_rate": 0.457
+    },
+    "IRL": {
+      "total": 59,
+      "success_rate": 0.525
+    },
+    "JPN": {
+      "total": 56,
+      "success_rate": 0.661
+    },
+    "SGP": {
+      "total": 54,
+      "success_rate": 0.519
+    },
+    "CHE": {
+      "total": 54,
+      "success_rate": 0.537
+    },
+    "DNK": {
+      "total": 47,
+      "success_rate": 0.468
+    }
+  },
+  "optimal_threshold": 0.41,
+  "dataset_summary": {
+    "total_rows": 66368,
+    "resolved_rows": 13334,
+    "operating_count": 53034,
+    "acquired_count": 5549,
+    "closed_count": 6238,
+    "ipo_count": 1547
+  }
+}

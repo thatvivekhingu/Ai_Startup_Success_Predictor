@@ -1,80 +1,86 @@
+from typing import Optional, List, Dict, Any
+from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
-
-
-class RequestModel(BaseModel):
-    model_config = ConfigDict(str_strip_whitespace=True)
-
-
-class AuthRequest(RequestModel):
-    username: str = Field(min_length=1, max_length=80)
-    password: str = Field(min_length=1, max_length=128)
-    remember_me: bool = False
-
-
-class RegisterRequest(RequestModel):
-    username: str = Field(min_length=3, max_length=80, pattern=r"^[A-Za-z0-9._-]+$")
+# User Schemas
+class UserCreate(BaseModel):
+    username: str
     email: EmailStr
-    password: str = Field(min_length=8, max_length=128)
+    password: str
 
-
-class ProfileUpdate(RequestModel):
-    username: str = Field(min_length=3, max_length=80, pattern=r"^[A-Za-z0-9._-]+$")
-    email: EmailStr
-
-
-class PasswordChange(RequestModel):
-    current_password: str = Field(min_length=1, max_length=128)
-    new_password: str = Field(min_length=8, max_length=128)
-
-
-class UserAdminUpdate(RequestModel):
-    role: Literal["admin", "analyst"] | None = None
-    is_active: bool | None = None
-
-    @model_validator(mode="after")
-    def require_change(self):
-        if self.role is None and self.is_active is None:
-            raise ValueError("Provide a role or active status")
-        return self
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
 class UserOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
     id: int
     username: str
     email: str
-    role: str
-    is_active: bool
     created_at: datetime
 
-class TokenResponse(BaseModel):
+    class Config:
+        from_attributes = True
+
+class Token(BaseModel):
     access_token: str
-    token_type: str = "bearer"
+    token_type: str
     user: UserOut
 
-class PredictionCreate(RequestModel):
-    model_config = ConfigDict(str_strip_whitespace=True, allow_inf_nan=False)
-    startup_name: str = Field(min_length=2, max_length=160)
-    country: str = Field(min_length=2, max_length=80)
-    industry: str = Field(min_length=2, max_length=80)
-    funding: float = Field(ge=0)
-    team_size: int = Field(ge=1, le=100000)
-    experience: float = Field(ge=0, le=60)
-    revenue: float = Field(ge=0)
-    burn_rate: float = Field(ge=0)
-    market_size: float = Field(ge=0)
-    product_stage: Literal["Idea", "MVP", "Early Revenue", "Growth", "Scale"]
-    investors: int = Field(ge=0, le=100000)
-    competition: float = Field(ge=0, le=100)
-    growth_rate: float = Field(ge=-100, le=1000)
+class TokenData(BaseModel):
+    username: Optional[str] = None
 
-class PredictionOut(PredictionCreate):
-    model_config = ConfigDict(from_attributes=True)
+# Prediction Schemas
+class PredictionInput(BaseModel):
+    startup_name: str
+    primary_category: str
+    country_code: str
+    funding_total_usd: float
+    funding_rounds: int
+    founded_year: Optional[int] = 2022
+    first_funding_year: Optional[int] = 2023
+    last_funding_year: Optional[int] = 2024
+    team_size: Optional[int] = 5
+    has_accelerator: Optional[bool] = False
+    patent_count: Optional[int] = 0
+
+class PredictionOutput(BaseModel):
+    id: Optional[int] = None
+    startup_name: str
+    primary_category: str
+    country_code: str
+    funding_total_usd: float
+    funding_rounds: int
+    success_probability: float  # 0 to 100
+    confidence_score: float     # 0 to 100
+    status_tier: str            # "High Potential (Unicorn / Acquisition Ready)", "Moderate Growth", "Elevated Risk"
+    strengths: List[str]
+    risk_factors: List[str]
+    recommendations: List[str]
+    feature_contributions: List[Dict[str, Any]]
+    created_at: Optional[datetime] = None
+
+class PredictionHistoryItem(BaseModel):
     id: int
-    prediction: str
-    probability: float
-    model_accuracy: float
+    startup_name: str
+    primary_category: str
+    country_code: str
+    funding_total_usd: float
+    funding_rounds: int
+    success_probability: float
+    confidence_score: float
+    status_tier: str
     created_at: datetime
-    username: str | None = None
+
+    class Config:
+        from_attributes = True
+
+# Analytics Schemas
+class ModelMetricsResponse(BaseModel):
+    best_model: str
+    metrics: Dict[str, Any]
+    models_comparison: Dict[str, Any]
+    top_features: List[Dict[str, Any]]
+    dataset_summary: Dict[str, Any]
+    top_categories: List[str]
+    top_countries: List[str]
+    trained_at: str

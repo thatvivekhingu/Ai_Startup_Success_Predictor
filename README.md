@@ -1,170 +1,277 @@
-<div align="center">
+# StartupPulse AI - Startup Success Predictor
 
-# 🚀 Foundr.AI — AI Startup Success Predictor & LLM Investment Copilot
+[![GitHub Repo](https://img.shields.io/badge/GitHub-thatvivekhingu%2FAi__Startup__Success__Predictor-blue?logo=github)](https://github.com/thatvivekhingu/Ai_Startup_Success_Predictor)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.3+-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-### *Turn Startup Operating Data & Investment Rounds into Actionable Intelligence, Explainable Risk Scores & Executive Memos*
+An end-to-end full-stack machine learning application designed to forecast the potential success probability, growth trajectory, and risk factors of early-to-growth stage startups based on investment funding, rounds, industry vertical, geography, and lifecycle milestones.
 
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![React](https://img.shields.io/badge/React-18.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![XGBoost](https://img.shields.io/badge/XGBoost-Ensemble-EB5424?style=for-the-badge&logo=xgboost&logoColor=white)
-![Google Gemini](https://img.shields.io/badge/Google_Gemini-LLM_Copilot-4285F4?style=for-the-badge&logo=google&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
-
-</div>
-
----
-
-## 📌 Overview
-
-**Foundr.AI** is an enterprise-grade AI decision-intelligence and startup advisory platform. By combining **Gradient Boosted Tree Ensembles (XGBoost, LightGBM, Random Forest)**, **PyTorch Deep Tabular Neural Networks**, and **Google Gemini LLM Reasoning**, Foundr.AI analyzes startup financial metrics, burn velocity, and funding history to deliver:
-- Granular **Success vs. Failure Probabilities** (ROC-AUC ~82% on 66,000+ real Crunchbase records).
-- **SHAP (SHapley Additive exPlanations)** feature attribution explaining exactly *why* a score was given.
-- **AI-Generated Executive Investment Memos & Founder Playbooks** powered by Google Gemini.
+**Repository**: [https://github.com/thatvivekhingu/Ai_Startup_Success_Predictor](https://github.com/thatvivekhingu/Ai_Startup_Success_Predictor)
 
 ---
 
-## ✨ Key Features
+## Table of Contents
 
-- 🧠 **Dual Machine Learning Engine**:
-  - **Classical & Gradient Boosting**: XGBoost, LightGBM, Random Forest, and Decision Trees benchmarked with stratified cross-validation.
-  - **PyTorch Deep Learning (`StartupTabularNN`)**: Multi-layer deep tabular network with BatchNorm, GELU non-linearities, and Dropout.
-- 🔍 **Explainable AI (XAI) with SHAP**: `shap.TreeExplainer` computes exact mathematical Shapley values for positive and negative risk drivers.
-- 🤖 **Google Gemini LLM Copilot**: Automatically drafts structured VC Investment Memos, risk radar assessments, and milestone recommendations.
-- 📊 **Interactive React Dashboard**: Dynamic BI visualizations for capital runway, burn resilience, and team velocity.
-- 📁 **Batch CSV Scoring**: Score hundreds of startups in seconds via multi-file upload.
-- 🔐 **JWT Authentication & RBAC**: Secure role-based access control protecting proprietary financial data.
-- ⚡ **Asynchronous FastAPI REST API**: Validated with Pydantic v2 and SQLAlchemy ORM.
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [System Architecture](#system-architecture)
+- [Project Structure](#project-structure)
+- [Machine Learning Pipeline](#machine-learning-pipeline)
+- [Quickstart Guide](#quickstart-guide)
+  - [Prerequisites](#prerequisites)
+  - [1. Clone Repository](#1-clone-repository)
+  - [2. Backend Setup](#2-backend-setup)
+  - [3. Frontend Setup](#3-frontend-setup)
+- [Docker Deployment](#docker-deployment)
+- [API Endpoints](#api-endpoints)
+- [Author](#author)
 
 ---
 
-## 🏗️ System Architecture
+## Overview
 
-```mermaid
-graph TD
-    A[React Web Client :5173] -->|REST API / JWT| B[FastAPI Backend Engine :8000]
-    B --> C[Auth Guard & Pydantic Schemas]
-    C --> D[(SQLite DB / Audit Logs)]
-    C --> E[Inference Engine & CSV Service]
-    E --> F["ML Pipeline (XGBoost / LightGBM / RF)"]
-    E --> G["PyTorch Deep Tabular NN (.pth)"]
-    E --> H["SHAP TreeExplainer (XAI Drivers)"]
-    E --> I["Google Gemini AI (LLM Investment Copilot)"]
+The **AI Startup Success Predictor** leverages historical startup investment data (66,000+ records) from Crunchbase to train machine learning classification algorithms. It provides founders, venture capitalists, and accelerators with actionable intelligence:
+- **Success Probability Scoring (0-100%)**
+- **Model Confidence Rating**
+- **Automated Strengths & Risk Factors Detection**
+- **Tailored AI-Driven Growth Recommendations**
+- **Historical Prediction Portfolio & Analytics Hub**
+
+---
+
+## Key Features
+
+- **Interactive Prediction Studio**: Flexible form with real-time sliders, funding shortcuts ($250K to $60M+), sector dropdowns, and country selectors.
+- **1-Click Archetype Presets**: Pre-populated benchmark templates for AI SaaS, FinTech Scale-ups, HealthTech Diagnostics, and Bootstrapped E-Commerce.
+- **Outcome Visualization**: Circular radial score gauge, status tier badges, celebration effects, and feature contribution drivers.
+- **Strategic Advice Engine**: Dynamic recommendations tailored to runway, stage, team size, IP patents, and market dynamics.
+- **User Authentication**: Secure JWT signup/login with password hashing (Bcrypt) and personalized history tracking.
+- **Portfolio Ledger**: Filterable, searchable dashboard table of past evaluations with deletion and reload capabilities.
+- **Model Intelligence Hub**: Real-time telemetry showing ROC-AUC, Accuracy, Precision, Recall, Confusion Matrix, and Gini feature importances.
+- **Jupyter Notebook Included**: Beginner-friendly, step-by-step notebook (`ml_pipelines/startup_model_training.ipynb`) covering data preprocessing, EDA, model training, and artifact serialization.
+
+---
+
+## Tech Stack
+
+| Domain | Technologies |
+| :--- | :--- |
+| **Frontend** | React 18, Vite, TailwindCSS, Lucide React, Recharts, Canvas Confetti |
+| **Backend** | Python 3.10+, FastAPI, Uvicorn, SQLAlchemy, Pydantic, Python-JOSE |
+| **Machine Learning** | Scikit-learn, Pandas, NumPy, Joblib, GradientBoosting, RandomForest |
+| **Database** | SQLite (SQLAlchemy ORM) |
+| **DevOps & Container** | Docker, Docker Compose, Nginx |
+
+---
+
+## System Architecture
+
+```
+[Crunchbase Startup Data]
+           │
+           ▼
+[Data Cleaning & Feature Engineering]
+           │
+           ▼
+[Jupyter Notebook: startup_model_training.ipynb]
+           │
+           ▼
+[Trained Artifacts: model.pkl + preprocessor.pkl + metadata.json]
+           │
+           ▼
+[FastAPI REST Backend] ◄──► [SQLite DB: Users & Predictions]
+           ▲
+           │ JSON API (Port 8000)
+           ▼
+[React + Vite + TailwindCSS Frontend] (Port 5173 / 3000)
 ```
 
 ---
 
-## 📊 Machine Learning Model Benchmarks
-
-Trained and evaluated on the **Crunchbase Real Startup Dataset (66,368 companies)**:
-
-| Model Architecture | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| 🌲 **Random Forest Classifier** | **74.42%** | **75.91%** | **76.04%** | **0.7598** | **0.8203** |
-| 🚀 **Gradient Boosting (XGBoost/GBM)** | 74.00% | 74.55% | 77.62% | 0.7606 | 0.8138 |
-| 🧠 **PyTorch Deep Tabular NN** | 73.10% | 74.20% | 75.80% | 0.7498 | 0.8090 |
-| 🌳 **Decision Tree** | 72.44% | 77.07% | 68.60% | 0.7259 | 0.8022 |
-| 📈 **Logistic Regression** | 72.56% | 76.86% | 69.28% | 0.7287 | 0.7983 |
-
----
-
-## 📁 Repository Structure
+## Project Structure
 
 ```
 Ai_Startup_Success_Predictor/
-├── backend/
-│   ├── main.py                     # FastAPI Application Entrypoint & Routes
-│   ├── services.py                 # Core ML Scoring & Business Logic
-│   ├── shap_service.py             # SHAP Explainable AI (XAI) Service
-│   ├── llm_copilot.py              # Google Gemini LLM Copilot Engine
-│   ├── pytorch_service.py          # PyTorch Deep Tabular Inference Service
-│   ├── database.py                 # SQLAlchemy Database Connection
-│   ├── models.py                   # ORM Database Models
-│   ├── schemas.py                  # Pydantic Schemas & Validation
-│   ├── csv_service.py              # Batch CSV Processing Engine
-│   ├── seed.py                     # Database Seeder Script
-│   ├── requirements.txt            # Python Dependencies
-│   └── model/
-│       ├── startup_model.pkl       # Trained ML Pipeline Checkpoint
-│       ├── pytorch_startup_model.pth # PyTorch Neural Network Weights
-│       └── metrics.json            # Model Evaluation Metrics
-├── frontend/
-│   ├── src/                        # React Pages, Components & Charts
-│   ├── package.json                # Frontend Dependencies
-│   └── vite.config.js              # Vite Build Configuration
-├── ml_pipeline/
-│   ├── train.py                    # Multi-Model Benchmarking & Training Loop
-│   ├── preprocessing.py            # ColumnTransformer & Scaling Pipeline
-│   ├── feature_engineering.py      # Domain Feature Engineering
-│   └── data/startup.csv            # Training Sample Data
-├── Data/
-│   └── big_startup_secsees_dataset.csv # Crunchbase 66k Dataset
-├── Startup_Success_Model.ipynb     # Interactive EDA & Classical ML Benchmark Notebook
-├── PyTorch_DL_and_LLM_Startup_Predictor.ipynb # PyTorch Tabular NN & LLM Copilot Notebook
-└── README.md                       # Documentation
+├── backend/                      # FastAPI Python Backend
+│   ├── routers/
+│   │   ├── auth_router.py        # Registration, login & user profile
+│   │   ├── prediction_router.py  # Prediction inference, history & presets
+│   │   └── analytics_router.py   # Model telemetry & dataset metrics
+│   ├── auth.py                   # JWT generation & password hashing
+│   ├── database.py               # SQLite engine & session setup
+│   ├── models.py                 # SQLAlchemy ORM models
+│   ├── predictor.py              # ML inference & recommendation engine
+│   ├── schemas.py                # Pydantic validation schemas
+│   ├── main.py                   # FastAPI app entrypoint
+│   ├── Dockerfile                # Backend container config
+│   └── requirements.txt          # Python dependencies
+│
+├── frontend/                     # React + Vite + TailwindCSS Frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx        # Navigation, auth actions & server status
+│   │   │   ├── PredictionForm.jsx# Interactive form & archetype presets
+│   │   │   ├── PredictionResult.jsx # Radial score meter & AI insights
+│   │   │   ├── Dashboard.jsx     # Evaluation ledger & portfolio table
+│   │   │   ├── ModelInsights.jsx # ROC curves, metrics & feature charts
+│   │   │   └── AuthModal.jsx     # Login & Signup modal
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx   # Global user state management
+│   │   ├── api.js                # Axios client with JWT interceptor
+│   │   ├── App.jsx               # Main view controller
+│   │   ├── main.jsx              # React DOM mounting
+│   │   └── index.css             # Tailwind utilities & glassmorphism
+│   ├── Dockerfile                # Multi-stage production container
+│   ├── nginx.conf                # Nginx reverse proxy configuration
+│   ├── package.json              # Node dependencies
+│   ├── tailwind.config.js        # Theme & color definitions
+│   └── vite.config.js            # Vite build & proxy settings
+│
+├── ml_pipelines/                 # Machine Learning Pipelines & Notebooks
+│   ├── startup_model_training.ipynb # Step-by-step human-style Jupyter Notebook
+│   ├── train_model.py            # Standalone model training script
+│   ├── create_notebook.py        # Notebook generation utility
+│   ├── model.pkl                 # Serialized Champion Model (GradientBoosting)
+│   ├── preprocessor.pkl          # Serialized ColumnTransformer pipeline
+│   └── metadata.json             # Model metrics, feature importances & stats
+│
+├── datasets/                     # Startup Datasets
+│   └── startup_data.csv          # Prepared Crunchbase dataset
+│
+├── docker-compose.yml            # Multi-container orchestration
+├── .gitignore                    # Git ignore file
+└── README.md                     # Project documentation
 ```
 
 ---
 
-## 🚀 Quick Start & Installation
+## Machine Learning Pipeline
+
+The model training workflow is documented cell-by-cell in [`ml_pipelines/startup_model_training.ipynb`](ml_pipelines/startup_model_training.ipynb):
+
+1. **Import libraries**: Pandas, NumPy, Matplotlib, Scikit-learn, Joblib.
+2. **Load dataset**: Inspection of 66,368 Crunchbase startup records.
+3. **Data Cleaning**:
+   - Currency sanitization for `funding_total_usd`.
+   - Datetime conversion for `founded_at`, `first_funding_at`, `last_funding_at`.
+4. **Feature Engineering**:
+   - `startup_age_years`: Operating duration since founding.
+   - `funding_duration_years`: Span between first and latest funding round.
+   - `time_to_first_funding_years`: Ramp-up velocity to initial capital.
+   - `primary_category_clean`: Primary industry sector extraction.
+   - `country_code_clean`: Top country market segmentation.
+5. **Target Definition**:
+   - Binary classification: **Success (1)** = Acquired or IPO vs **Closed (0)** = Discontinued.
+6. **Data Preprocessing**:
+   - `ColumnTransformer` with `StandardScaler` for numeric values and `OneHotEncoder` for categoricals.
+7. **Model Evaluation & Champion Selection**:
+   - Comparison across **Logistic Regression**, **Random Forest**, and **Gradient Boosting**.
+   - **Selected Model**: `GradientBoostingClassifier`
+     - **ROC-AUC**: **83.1%**
+     - **Precision**: **77.3%**
+     - **Recall**: **80.4%**
+     - **Accuracy**: **74.9%**
+8. **Artifact Serialization**: Saving `model.pkl` and `preprocessor.pkl`.
+
+---
+
+## Quickstart Guide
 
 ### Prerequisites
-- **Python 3.10+**
-- **Node.js 18+** & **npm**
+- Python 3.10+
+- Node.js 18+ and npm
+- Git
 
-### 1. Backend Setup
+### 1. Clone Repository
+
 ```bash
-# Clone the repository
 git clone https://github.com/thatvivekhingu/Ai_Startup_Success_Predictor.git
 cd Ai_Startup_Success_Predictor
+```
 
-# Install Python dependencies
+### 2. Backend Setup
+
+```bash
+# Optional: create virtual environment
+python -m venv venv
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+# source venv/bin/activate
+
+# Install dependencies
 pip install -r backend/requirements.txt
-pip install torch xgboost lightgbm shap python-dotenv
 
-# Configure environment variables (Optional: Add your Gemini API key)
-# Create .env file:
-echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
-
-# Run unit and integration tests
-pytest backend/ -v
+# Run ML model training (if artifacts need regeneration)
+python ml_pipelines/train_model.py
 
 # Start FastAPI backend server
-uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
 ```
-*Backend API will be live at `http://localhost:8000` (Swagger UI docs at `http://localhost:8000/docs`).*
 
----
+- API Base URL: `http://127.0.0.1:8000`
+- Interactive OpenAPI Docs: `http://127.0.0.1:8000/docs`
 
-### 2. Frontend Setup
+### 3. Frontend Setup
+
+Open a new terminal window:
+
 ```bash
-# In a new terminal, navigate to frontend directory
 cd frontend
 
-# Install npm dependencies
+# Install packages
 npm install
 
-# Launch Vite development server
+# Start Vite development server
 npm run dev
 ```
-*Frontend Web Application will be live at `http://localhost:5173`.*
+
+- Web App URL: `http://localhost:5173`
 
 ---
 
-## 🔗 Key API Endpoints
+## Docker Deployment
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/predict` | Single startup prediction + SHAP feature attributions |
-| `POST` | `/copilot/advisory` | Full Google Gemini AI Investment Memo & Action Plan |
-| `POST` | `/predict/csv` | Batch CSV upload for multi-startup scoring |
-| `GET` | `/dashboard/stats` | Aggregated BI analytics and success metrics |
-| `POST` | `/login` | JWT User Authentication |
-| `POST` | `/register` | Register new Founder / Investor account |
+To build and run the entire application using Docker:
+
+```bash
+docker-compose up --build
+```
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8000`
 
 ---
 
-## 📄 License
+## API Endpoints
 
-This project is open-source under the **MIT License**.
+### Authentication
+- `POST /api/auth/register`: Register new user account.
+- `POST /api/auth/login`: Authenticate and receive JWT access token.
+- `GET /api/auth/me`: Get current user profile.
+
+### Predictions & Presets
+- `GET /api/presets`: Retrieve benchmark startup archetypes.
+- `POST /api/predict`: Evaluate startup parameters and return probability score, strengths, risks, and recommendations.
+- `GET /api/predictions/history`: Fetch saved evaluations for the user.
+- `GET /api/predictions/{id}`: Fetch single evaluation record.
+- `DELETE /api/predictions/{id}`: Delete an evaluation from the ledger.
+
+### Analytics & Telemetry
+- `GET /api/analytics/model-metrics`: Retrieve algorithm comparison, ROC-AUC, accuracy, and feature importances.
+- `GET /api/analytics/industry-stats`: Sector-wise and country-wise historical success rates.
+- `GET /api/analytics/summary`: Aggregate counts and portfolio metrics.
+
+---
+
+## Author
+
+**Vivek Hingu**  
+GitHub: [@thatvivekhingu](https://github.com/thatvivekhingu)  
+Repository: [https://github.com/thatvivekhingu/Ai_Startup_Success_Predictor](https://github.com/thatvivekhingu/Ai_Startup_Success_Predictor)

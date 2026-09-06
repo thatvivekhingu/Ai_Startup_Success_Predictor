@@ -1,116 +1,153 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Samsung Official Typography */
+@font-face {
+  font-family: 'Samsung Sharp Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Samsung Sharp Sans'), url('https://fonts.cdnfonts.com/s/17880/samsungsharpsans.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Samsung Sharp Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Samsung Sharp Sans'), url('https://fonts.cdnfonts.com/s/17880/samsungsharpsans-medium.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Samsung Sharp Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Samsung Sharp Sans'), url('https://fonts.cdnfonts.com/s/17880/samsungsharpsans-bold.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Samsung Sharp Sans';
+  font-style: normal;
+  font-weight: 800;
+  src: local('Samsung Sharp Sans'), url('https://fonts.cdnfonts.com/s/17880/samsungsharpsans-bold.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SamsungOne';
+  font-style: normal;
+  font-weight: 400;
+  src: local('SamsungOne'), url('https://fonts.cdnfonts.com/s/17880/SamsungOne-400.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'SamsungOne';
+  font-style: normal;
+  font-weight: 700;
+  src: local('SamsungOne'), url('https://fonts.cdnfonts.com/s/17880/SamsungOne-700.woff') format('woff');
+  font-display: swap;
+}
+
 @layer base {
-  :root {
-    color-scheme: dark;
-    --bg-dark: #08090d;
-    --card-dark: #0e1118;
-    --border-dark: #1c2230;
-  }
-
-  * {
-    box-sizing: border-box;
-    border-color: #1c2230;
-  }
-
-  html {
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #08090d;
-    color: #f1f5f9;
+  body {
+    @apply bg-[#F8FAFC] text-slate-900 font-sans;
+    font-family: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     letter-spacing: -0.011em;
   }
 
-  body {
-    margin: 0;
-    min-width: 320px;
-    background-color: #08090d;
-    color: #f1f5f9;
-    overflow-x: hidden;
-  }
-
-  ::selection {
-    background: rgba(99, 102, 241, 0.35);
-    color: #ffffff;
-  }
-
-  /* Custom Sleek Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #08090d;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #1c2230;
-    border-radius: 9999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #2b3347;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', 'Montserrat', 'Inter', sans-serif;
   }
 }
 
-@layer components {
-  .glass-card {
-    background: rgba(14, 17, 24, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-  }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
 
-  .glass-card-hover {
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+/* Orbit Keyframe Animations */
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
   }
-  .glass-card-hover:hover {
-    background: rgba(20, 24, 34, 0.85);
-    border-color: rgba(99, 102, 241, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), 0 0 20px -4px rgba(99, 102, 241, 0.15);
+  to {
+    transform: rotate(360deg);
   }
+}
 
-  .glow-border {
-    position: relative;
+@keyframes spinReverseSlow {
+  from {
+    transform: rotate(360deg);
   }
-  .glow-border::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    background: linear-gradient(90deg, #6366f1, #06b6d4, #10b981);
-    border-radius: inherit;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  to {
+    transform: rotate(0deg);
   }
-  .glow-border:hover::after {
-    opacity: 1;
-  }
+}
 
-  /* Range input slider styling */
-  input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: #1c2230;
-    height: 6px;
-    border-radius: 9999px;
-    outline: none;
+@keyframes floatAnim {
+  0%, 100% {
+    transform: translateY(0);
   }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #6366f1;
-    cursor: pointer;
-    border: 2px solid #ffffff;
-    box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
-    transition: transform 0.15s ease, background-color 0.15s ease;
+  50% {
+    transform: translateY(-8px);
   }
-  input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    background: #818cf8;
+}
+
+@keyframes counterRotate {
+  from {
+    transform: rotate(0deg);
   }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes counterRotateReverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-orbit-slow {
+  animation: spinSlow 35s linear infinite;
+}
+
+.animate-orbit-reverse {
+  animation: spinReverseSlow 42s linear infinite;
+}
+
+.animate-orbit-outer {
+  animation: spinSlow 50s linear infinite;
+}
+
+.animate-counter-rotate {
+  animation: counterRotate 35s linear infinite;
+}
+
+.animate-counter-rotate-reverse {
+  animation: counterRotateReverse 42s linear infinite;
+}
+
+.animate-counter-rotate-outer {
+  animation: counterRotate 50s linear infinite;
+}
+
+.animate-float-card {
+  animation: floatAnim 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: floatAnim 5s ease-in-out 1.5s infinite;
 }
