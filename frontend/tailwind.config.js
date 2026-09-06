@@ -7,6 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
+        sp: {
+          canvas: 'var(--sp-canvas)',
+          surface: 'var(--sp-surface)',
+          ink: 'var(--sp-ink)',
+          muted: 'var(--sp-muted)',
+          rule: 'var(--sp-rule)',
+          navy: 'var(--sp-navy)',
+          'navy-raised': 'var(--sp-navy-raised)',
+          cobalt: 'var(--sp-cobalt)',
+          'cobalt-strong': 'var(--sp-cobalt-strong)',
+          teal: 'var(--sp-teal)',
+          amber: 'var(--sp-amber)',
+          rose: 'var(--sp-rose)',
+        },
         brand: {
           50: '#EFF6FF',
           100: '#DBEAFE',
@@ -28,6 +42,10 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'Plus Jakarta Sans', 'system-ui', 'sans-serif'],
+        sp: ['var(--sp-body)', 'Inter', 'sans-serif'],
+        'sp-display': ['var(--sp-display)', 'Inter', 'sans-serif'],
+        'sp-body': ['var(--sp-body)', 'Inter', 'sans-serif'],
+        mono: ['var(--sp-mono)', 'monospace'],
         heading: ['Poppins', 'Montserrat', 'sans-serif'],
         display: ['Poppins', 'Outfit', 'sans-serif'],
         inter: ['Inter', 'sans-serif'],
@@ -37,6 +55,14 @@ export default {
         montserrat: ['Montserrat', 'sans-serif'],
         samsung: ['"Samsung Sharp Sans"', '"SamsungOne"', 'Poppins', 'Inter', 'sans-serif'],
         'samsung-one': ['"SamsungOne"', 'Inter', 'sans-serif'],
+      },
+      borderRadius: {
+        'sp-control': 'var(--sp-radius-control)',
+        'sp-panel': 'var(--sp-radius-panel)',
+        'sp-dialog': 'var(--sp-radius-dialog)',
+      },
+      boxShadow: {
+        'sp-menu': 'var(--sp-menu-shadow)',
       },
     },
   },
