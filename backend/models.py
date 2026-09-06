@@ -10,9 +10,32 @@ class User(Base):
     username = Column(String(50), unique=True, index=True, nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
+    full_name = Column(String(100), nullable=True)
+    role = Column(String(50), default="Student Innovator")
+    institution = Column(String(200), default="Gujarat Technological University (GTU) • SSIP 2.0 Cohort")
+    avatar = Column(String(500), nullable=True)
+    provider = Column(String(20), default="local") # local, google, microsoft, github
+    is_active = Column(Integer, default=1)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     predictions = relationship("Prediction", back_populates="user", cascade="all, delete-orphan")
+
+class FundingDeal(Base):
+    __tablename__ = "funding_deals"
+
+    id = Column(Integer, primary_key=True, index=True)
+    startup_name = Column(String(100), nullable=False, index=True)
+    amount = Column(String(50), nullable=False)
+    amount_usd = Column(Float, default=0.0)
+    round = Column(String(50), nullable=False, index=True)
+    lead_investors = Column(Text, nullable=False)
+    existing_investors = Column(Text, nullable=True)
+    sector = Column(String(100), nullable=False, index=True)
+    valuation = Column(String(50), nullable=True)
+    source_url = Column(String(500), nullable=False)
+    source_title = Column(String(200), nullable=False)
+    summary = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 class Prediction(Base):
     __tablename__ = "predictions"

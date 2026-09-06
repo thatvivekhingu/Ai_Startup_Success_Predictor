@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .database import engine, Base
-from .routers import auth_router, prediction_router, analytics_router, gujarat_router
+from .routers import auth_router, prediction_router, analytics_router, gujarat_router, funding_router
 from .predictor import predictor_instance
 
 # Create database tables
@@ -27,6 +27,7 @@ app.include_router(auth_router.router)
 app.include_router(prediction_router.router)
 app.include_router(analytics_router.router)
 app.include_router(gujarat_router.router)
+app.include_router(funding_router.router)
 
 @app.on_event("startup")
 def seed_real_indian_startups():

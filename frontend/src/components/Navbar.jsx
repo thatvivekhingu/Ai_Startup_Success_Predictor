@@ -94,6 +94,20 @@ const Navbar = ({ currentTab, setCurrentTab, onOpenAuth, onOpenProfile }) => {
                     <div className="text-[11px] text-slate-400 font-normal">ROC-AUC & Top 10 Indian Unicorns</div>
                   </div>
                 </button>
+
+                <button
+                  onClick={() => setCurrentTab('funding')}
+                  className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 transition-colors flex items-start space-x-3"
+                >
+                  <span className="p-1.5 rounded-lg bg-purple-50 text-purple-600">💎</span>
+                  <div>
+                    <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                      <span>Funding Radar</span>
+                      <span className="px-1.5 py-0.2 text-[9px] font-extrabold bg-emerald-100 text-emerald-700 rounded-full">$1.6B+</span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 font-normal">Emergent, River, Udaan, Yotta Deals</div>
+                  </div>
+                </button>
               </div>
             </div>
 
@@ -129,6 +143,25 @@ const Navbar = ({ currentTab, setCurrentTab, onOpenAuth, onOpenProfile }) => {
               className={`hover:text-blue-600 transition-colors ${currentTab === 'insights' ? 'text-blue-600 font-extrabold' : ''}`}
             >
               Resources
+            </button>
+
+            {/* Dedicated Funding Radar Page Link */}
+            <button
+              onClick={() => {
+                setCurrentTab('funding');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className={`flex items-center space-x-1.5 transition-colors py-1 px-2 rounded-lg ${
+                currentTab === 'funding'
+                  ? 'text-emerald-600 font-extrabold bg-emerald-50'
+                  : 'text-slate-700 hover:text-emerald-600'
+              }`}
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Funding Radar</span>
+              <span className="px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[10px] font-bold">
+                $1.6B+
+              </span>
             </button>
 
             {/* For Students Link with PRO Pill Badge */}
@@ -205,7 +238,10 @@ const Navbar = ({ currentTab, setCurrentTab, onOpenAuth, onOpenProfile }) => {
               </div>
             ) : (
               <button
-                onClick={onOpenAuth}
+                onClick={() => {
+                  setCurrentTab('login');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="text-xs font-bold text-slate-800 hover:text-blue-600 transition-colors px-2 py-1"
               >
                 Sign In
@@ -226,7 +262,10 @@ const Navbar = ({ currentTab, setCurrentTab, onOpenAuth, onOpenProfile }) => {
               </button>
             ) : (
               <button
-                onClick={onOpenAuth}
+                onClick={() => {
+                  setCurrentTab('login');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="px-5 py-2.5 rounded-full bg-[#0F172A] hover:bg-blue-600 text-white text-xs font-bold transition-all shadow-sm active:scale-95 flex items-center space-x-2 shrink-0 group"
               >
                 <span>Get Started</span>

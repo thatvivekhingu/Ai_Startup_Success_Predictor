@@ -7,15 +7,39 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+    full_name: Optional[str] = None
+    role: Optional[str] = "Student Innovator"
+    institution: Optional[str] = "Gujarat Technological University (GTU) • SSIP 2.0 Cohort"
+    avatar: Optional[str] = None
 
 class UserLogin(BaseModel):
     username: str
     password: str
 
+class SocialAuthRequest(BaseModel):
+    provider: str  # google, microsoft, github
+    email: EmailStr
+    name: str
+    username: Optional[str] = None
+    avatar: Optional[str] = None
+    role: Optional[str] = "Student Innovator"
+    institution: Optional[str] = "Gujarat Technological University (GTU) • SSIP 2.0 Cohort"
+
+class UserProfileUpdate(BaseModel):
+    full_name: Optional[str] = None
+    role: Optional[str] = None
+    institution: Optional[str] = None
+    avatar: Optional[str] = None
+
 class UserOut(BaseModel):
     id: int
     username: str
     email: str
+    full_name: Optional[str] = None
+    role: Optional[str] = "Student Innovator"
+    institution: Optional[str] = None
+    avatar: Optional[str] = None
+    provider: Optional[str] = "local"
     created_at: datetime
 
     class Config:
@@ -28,6 +52,24 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class FundingDealOut(BaseModel):
+    id: int
+    startup_name: str
+    amount: str
+    amount_usd: float
+    round: str
+    lead_investors: str
+    existing_investors: Optional[str] = None
+    sector: str
+    valuation: Optional[str] = None
+    source_url: str
+    source_title: str
+    summary: Optional[str] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
 
 # Prediction Schemas
 class PredictionInput(BaseModel):
